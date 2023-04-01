@@ -37,24 +37,44 @@ class Table():
 
 
 
-    def add_card(self,card,x,y):
+    def addCard(self,card,x,y):
         image=Image.open(f'UNO_cards_small_dark/{card}.png')
         img=image.resize((100, 150))
         self.dict_of_cards[card] = ImageTk.PhotoImage(img)
         button_card = self.canvas.create_image(x, y, image=self.dict_of_cards[card])
         self.list_of_cards_in_hand.append((button_card,card))
-        print(self.list_of_cards_in_hand)
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x:self.selectCard(card))
         
-    
+    def addRemoteCard(self,card,x,y,angle):
+        image=Image.open(f'UNO_cards_small_light/{card}.png')
+        img=image.resize((80, 130))
+        self.dict_of_cards[f'dark{card}{angle}'] = ImageTk.PhotoImage(img.rotate(angle, expand=True))
+        self.canvas.create_image(x, y, image=self.dict_of_cards[f'dark{card}{angle}'])
+
+
+
+
     def start(self):      
         self.setCanvas()
         self.createDesign()
-        self.add_card(card='1_6',x=340,y=570)
-        self.add_card(card='2_6',x=460,y=570)
-        self.add_card(card='3_6',x=580,y=570)
-        self.add_card(card='2_4',x=700,y=570)
-        self.add_card(card='4_6',x=820,y=570)
-        self.add_card(card='1_8',x=940,y=570)
+        self.addCard(card='1_6',x=340,y=570)
+        self.addCard(card='2_6',x=460,y=570)
+        self.addCard(card='3_6',x=580,y=570)
+        self.addCard(card='2_4',x=700,y=570)
+        self.addCard(card='4_6',x=820,y=570)
+        self.addCard(card='1_8',x=940,y=570)
+
+        self.addRemoteCard(card='1_6',x=140,y=150,angle = 90)
+        self.addRemoteCard(card='2_6',x=140,y=255,angle = 90)
+        self.addRemoteCard(card='3_6',x=140,y=360,angle = 90)
+        self.addRemoteCard(card='2_4',x=140,y=465,angle = 90)
+        self.addRemoteCard(card='4_6',x=140,y=570,angle = 90)
+
+        self.addRemoteCard(card='1_6',x=1140,y=150,angle = 270)
+        self.addRemoteCard(card='2_6',x=1140,y=255,angle = 270)
+        self.addRemoteCard(card='3_6',x=1140,y=360,angle = 270)
+        self.addRemoteCard(card='2_4',x=1140,y=465,angle = 270)
+        self.addRemoteCard(card='4_6',x=1140,y=570,angle = 270)
+
         self.window.resizable(False, False)
         self.window.mainloop()
