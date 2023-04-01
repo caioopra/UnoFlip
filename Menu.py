@@ -27,7 +27,7 @@ class Menu():
             image=self.background_img,anchor="nw")
 
         self.img0 = PhotoImage(file = f"menu_images/img0.png")
-        button_start = self.canvas.create_image(270, 350, image=self.img0)
+        button_start = self.canvas.create_image(270, 360, image=self.img0)
         self.canvas.tag_bind(button_start, "<Button-1>", self.next_state)
     
     def start(self):  
