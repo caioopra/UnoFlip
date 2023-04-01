@@ -6,6 +6,7 @@ class Table():
     def __init__(self,window) -> None:
         self.window = window
         self.dict_of_cards ={}
+        self.list_of_cards_in_hand = []
            
     def setCanvas(self):
         self.canvas = Canvas(
@@ -28,13 +29,23 @@ class Table():
     def selectCard(self,card):
         button_card = self.canvas.create_image(640, 360, image=self.dict_of_cards[card])
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x:print('OI'))
+        
+        for k,i in enumerate(self.list_of_cards_in_hand):
+            if i[1] ==card:
+                self.canvas.delete(self.list_of_cards_in_hand[k][0])
+                del self.list_of_cards_in_hand[k]
+
+
 
     def add_card(self,card,x,y):
         image=Image.open(f'UNO_cards_small_dark/{card}.png')
         img=image.resize((100, 150))
         self.dict_of_cards[card] = ImageTk.PhotoImage(img)
         button_card = self.canvas.create_image(x, y, image=self.dict_of_cards[card])
+        self.list_of_cards_in_hand.append((button_card,card))
+        print(self.list_of_cards_in_hand)
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x:self.selectCard(card))
+        
     
     def start(self):      
         self.setCanvas()
