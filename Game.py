@@ -18,7 +18,8 @@ class Game():
                 
 
 
+if __name__ == '__main__':
+        
+    tela = Game()
 
-tela = Game()
-
-tela.start_game()
+    tela.start_game()
