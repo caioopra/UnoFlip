@@ -1,2 +1,2 @@
-tk
-Pillow
+Pillow==9.5.0
+tk==0.1.0
