@@ -29,6 +29,11 @@ class TelaMesa():
         self.img0 = PhotoImage(file = f"table_images/ButtonUno.png")
         button_start = self.canvas.create_image(640, 80, image=self.img0)
         self.canvas.tag_bind(button_start, "<Button-1>", lambda x: print('Gritou uno'))
+
+
+        self.img1 = PhotoImage(file = f"table_images/Button(2).png")
+        button_passar_vez = self.canvas.create_image(800, 300, image=self.img1)
+        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: print('Passou vez'))
         
         card ='0_0'
         image=Image.open(f'UNO_cards_small_light/{card}.png')
