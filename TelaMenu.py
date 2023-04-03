@@ -1,6 +1,7 @@
 from tkinter import *
 from Window import Window
-class Menu():
+
+class TelaMenu():
 
     def __init__(self,window,next_state) -> None:
         self.window = window

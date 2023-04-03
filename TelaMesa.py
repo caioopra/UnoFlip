@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
-class Table():
+class TelaMesa():
 
     def __init__(self,window) -> None:
         self.window = window
