@@ -121,11 +121,6 @@ class ActorInterface(DogPlayerInterface):
 
 
     def addCard(self):
-
-        for i in range(6):
-            if i < len(self.list_of_cards_in_hand_local):
-                self.slots_local.append(self.list_of_cards_in_hand_local[i])
-
         func0 = lambda x:self.selectCard(self.slots_local[0])
         func1 = lambda x:self.selectCard(self.slots_local[1])
         func2 = lambda x:self.selectCard(self.slots_local[2])
@@ -135,14 +130,14 @@ class ActorInterface(DogPlayerInterface):
         funcs = [func0,func1,func2,func3,func4,func5]
         
         for i in range(6):
+            if i < len(self.list_of_cards_in_hand_local):
+                self.slots_local.append(self.list_of_cards_in_hand_local[i])
             if i < len(self.slots_local):
                 button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i]])
                 self.slots_local[i] = (button_card,self.slots_local[i])
                 self.canvas.tag_bind(button_card, "<Button-1>", funcs[i])
 
         
-
-
     def addRemoteCard(self,card,x,y):
         self.canvas.create_image(x, y, image=self.dict_of_cards[card])
 
