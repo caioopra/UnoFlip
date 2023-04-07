@@ -18,6 +18,7 @@ class ActorInterface(DogPlayerInterface):
         self.list_of_cards_in_hand_remote2 = []
         self.list_of_cards_in_cheap = []
         self.slots_local = []
+        self.inicio_mao = 0
         self.loadCardImages()
         self.startMenu()
         
@@ -66,6 +67,14 @@ class ActorInterface(DogPlayerInterface):
         button_passar_vez = self.canvas.create_image(800, 300, image=self.img1)
         self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: print('Passou vez'))
         
+
+        self.img2 = PhotoImage(file = f"table_images/seta_esquerda.png")
+        button_passar_vez = self.canvas.create_image(340, 670, image=self.img2)
+        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.mover_mao(0))
+
+        self.img3 = PhotoImage(file = f"table_images/seta_direita.png")
+        button_passar_vez = self.canvas.create_image(940, 670, image=self.img3)
+        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x:self.mover_mao(1))
 
         button_card = self.canvas.create_image(500, 300, image=self.dict_of_cards['light_0'])
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x:print('comprou carta'))
@@ -118,9 +127,23 @@ class ActorInterface(DogPlayerInterface):
         self.slots_local = []
         self.addCard()
 
+    def mover_mao(self,direcao):
+        for k,i in enumerate(self.slots_local):
+            self.canvas.delete(self.slots_local[k][0])
+        
+        if direcao ==1:
+            if self.inicio_mao+6<len(self.list_of_cards_in_hand_local):
+                self.inicio_mao +=1
 
+        if direcao ==0:
+            if self.inicio_mao > 0:
+                self.inicio_mao -=1
+
+        self.slots_local = []
+        self.addCard()
 
     def addCard(self):
+
         func0 = lambda x:self.selectCard(self.slots_local[0])
         func1 = lambda x:self.selectCard(self.slots_local[1])
         func2 = lambda x:self.selectCard(self.slots_local[2])
@@ -129,9 +152,10 @@ class ActorInterface(DogPlayerInterface):
         func5 = lambda x:self.selectCard(self.slots_local[3])
         funcs = [func0,func1,func2,func3,func4,func5]
         
+
         for i in range(6):
-            if i < len(self.list_of_cards_in_hand_local):
-                self.slots_local.append(self.list_of_cards_in_hand_local[i])
+            if (i+self.inicio_mao) < len(self.list_of_cards_in_hand_local):
+                self.slots_local.append(self.list_of_cards_in_hand_local[i+self.inicio_mao])
             if i < len(self.slots_local):
                 button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i]])
                 self.slots_local[i] = (button_card,self.slots_local[i])
