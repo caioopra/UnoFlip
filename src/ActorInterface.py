@@ -5,7 +5,7 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from dog.dog_interface import DogPlayerInterface
 from dog.dog_actor import DogActor
-
+from random import randint
 
 
 class ActorInterface(DogPlayerInterface):
@@ -158,6 +158,7 @@ class ActorInterface(DogPlayerInterface):
                 button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i]])
                 self.slots_local[i] = (button_card,self.slots_local[i])
                 self.canvas.tag_bind(button_card, "<Button-1>", funcs[i])
+            
 
         
     def addRemoteCard(self,card,x,y):
@@ -176,7 +177,8 @@ class ActorInterface(DogPlayerInterface):
 
     def comprar(self):
         self.delete_local()
-        self.list_of_cards_in_hand_local.insert(0,'dark_23')
+        a = randint(1,63)
+        self.list_of_cards_in_hand_local.insert(0,f'dark_{a}')
         self.addCard()
 
     def start_table(self):

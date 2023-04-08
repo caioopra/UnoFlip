@@ -3,10 +3,11 @@ from Face import Face
 
 class FaceColorida(Face, ABC):
 
-    def __init__(self,cor,modelo):
-        super().__init__()
+    def __init__(self,id,cor):
+        super().__init__(id)
         self.cor = cor
 
+
     def get_cor(self):
-        return self.get_cor
+        return self.cor
 
