@@ -148,8 +148,8 @@ class ActorInterface(DogPlayerInterface):
         func1 = lambda x:self.selectCard(self.slots_local[1])
         func2 = lambda x:self.selectCard(self.slots_local[2])
         func3 = lambda x:self.selectCard(self.slots_local[3])
-        func4 = lambda x:self.selectCard(self.slots_local[2])
-        func5 = lambda x:self.selectCard(self.slots_local[3])
+        func4 = lambda x:self.selectCard(self.slots_local[4])
+        func5 = lambda x:self.selectCard(self.slots_local[5])
         funcs = [func0,func1,func2,func3,func4,func5]
         
 
@@ -183,7 +183,13 @@ class ActorInterface(DogPlayerInterface):
         self.list_of_cards_in_hand_local.append('dark_30')
         self.list_of_cards_in_hand_local.append('dark_4')
         self.list_of_cards_in_hand_local.append('dark_47')
-        self.list_of_cards_in_hand_local.append('dark_47')
+        self.list_of_cards_in_hand_local.append('dark_21')
+        self.list_of_cards_in_hand_local.append('dark_57')
+        self.list_of_cards_in_hand_local.append('dark_63')
+        self.list_of_cards_in_hand_local.append('dark_41')
+        self.list_of_cards_in_hand_local.append('dark_39')
+        self.list_of_cards_in_hand_local.append('dark_4')
+        self.list_of_cards_in_hand_local.append('dark_12')
         self.addCard()
 
         self.addRemoteCard(card='light_16_90',x=140,y=150)
