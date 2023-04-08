@@ -7,7 +7,26 @@ class Baralho():
         self.cartas_jogadas = []
 
     def criar_baralho(self):
-        pass
+        for i in range(0,12):
+            pass
+            #cartas especiais
+
+        for i in range(1,14):
+            pass
+            #cartas amarelas
+        for i in range(1,14):
+            pass
+            #cartas vermelhas
+        for i in range(1,14):
+            pass
+            #cartas azuis
+        for i in range(1,14):
+            pass
+            #cartas verdes
+        for i in range(1,14):
+            pass
+ 
+
 
     def embaralhar(self):
         pass

@@ -34,7 +34,7 @@ class ActorInterface(DogPlayerInterface):
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
         self.img0 = PhotoImage(file = f"menu_images/img0.png")
         button_start = self.canvas.create_image(270, 360, image=self.img0)
-        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start())
+        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_table())
 
 
     def startMenu(self):
@@ -54,9 +54,7 @@ class ActorInterface(DogPlayerInterface):
 
     def createTableDesign(self):
         self.background_img = PhotoImage(file = f"table_images/background.png")
-        background = self.canvas.create_image(
-            0, 0,
-            image=self.background_img,anchor="nw")
+        background = self.canvas.create_image(0, 0, image=self.background_img,anchor="nw")
 
         self.img0 = PhotoImage(file = f"table_images/ButtonUno.png")
         button_start = self.canvas.create_image(640, 80, image=self.img0)
@@ -72,12 +70,14 @@ class ActorInterface(DogPlayerInterface):
         button_passar_vez = self.canvas.create_image(340, 670, image=self.img2)
         self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.mover_mao(0))
 
+
         self.img3 = PhotoImage(file = f"table_images/seta_direita.png")
         button_passar_vez = self.canvas.create_image(940, 670, image=self.img3)
         self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x:self.mover_mao(1))
 
+
         button_card = self.canvas.create_image(500, 300, image=self.dict_of_cards['light_0'])
-        self.canvas.tag_bind(button_card, "<Button-1>", lambda x:print('comprou carta'))
+        self.canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
     
     def loadCardImages(self):
         for i in range(64):
@@ -114,9 +114,7 @@ class ActorInterface(DogPlayerInterface):
 
         self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[card[1]])
 
-        for k,i in enumerate(self.slots_local):
-            self.canvas.delete(self.slots_local[k][0])
-        
+        self.delete_local()       
 
         for k, j in enumerate(self.list_of_cards_in_hand_local):
             if card[1] == j:
@@ -124,7 +122,6 @@ class ActorInterface(DogPlayerInterface):
                 del self.list_of_cards_in_hand_local[k]
                 break
     
-        self.slots_local = []
         self.addCard()
 
     def mover_mao(self,direcao):
@@ -139,10 +136,11 @@ class ActorInterface(DogPlayerInterface):
             if self.inicio_mao > 0:
                 self.inicio_mao -=1
 
-        self.slots_local = []
+        
         self.addCard()
 
     def addCard(self):
+        self.slots_local = []
 
         func0 = lambda x:self.selectCard(self.slots_local[0])
         func1 = lambda x:self.selectCard(self.slots_local[1])
@@ -170,9 +168,18 @@ class ActorInterface(DogPlayerInterface):
         message = start_status.get_message()
         messagebox.showinfo(message=message)
         if message == 'Partida iniciada':
-            self.start()
+            self.start_table()
 
-    def start(self):
+    def delete_local(self):
+        for k,i in enumerate(self.slots_local):
+            self.canvas.delete(self.slots_local[k][0])
+
+    def comprar(self):
+        self.delete_local()
+        self.list_of_cards_in_hand_local.insert(0,'dark_23')
+        self.addCard()
+
+    def start_table(self):
         self.setTableCanvas()
         self.createTableDesign()
         
