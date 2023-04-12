@@ -8,7 +8,7 @@ class Baralho():
     def __init__(self) -> None:
         self.cartas = []
         self.cartas_jogadas = []
-
+        self.criar_baralho()
     def criar_baralho(self):
         cores = ['amarelo','vermelho', 'azul','verde']
         cores2 = ['laranja','rosa', 'roxo', 'ciano']
@@ -19,7 +19,6 @@ class Baralho():
         pos = [12,25,38,51]
 
         for i in range(4):
-            print(i)
             for j in range(1,10):
                 face_numerica = FaceNumerica(f'light_{pos[i]+j-1}',cores[i],str(j))
                 face_numerica_2 = FaceNumerica(f'dark_{pos[i]+j-1}',cores2[i],str(j))
@@ -50,6 +49,12 @@ class Baralho():
             for _ in range(2):
                 aux.append(face_inverter_ordem)
                 aux2.append(face_inverter_ordem2)
+
+            face_coringa1= FaceColoridaComPoder(f'light_{pos[i]+12}',cores[i],'inverter_ordem')
+            face_coring2 = FaceColoridaComPoder(f'dark_{pos[i]+12}',cores[i],'inverter_ordem')
+            for _ in range(2):
+                aux.append(face_inverter_ordem)
+                aux2.append(face_inverter_ordem2)
         
             shuffle(aux)
             shuffle(aux2)
@@ -60,11 +65,14 @@ class Baralho():
     def embaralhar(self):
         shuffle(self.cartas)
 
+    
     def dar_cartas_iniciais(self):
         pass
 
     def comprar_carta(self):
-        pass
+        carta = self.cartas.pop(0)
+        self.cartas_jogadas.append(carta)
+        return carta
 
 a = Baralho()
 a.criar_baralho()

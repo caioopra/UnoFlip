@@ -6,7 +6,7 @@ from tkinter import simpledialog
 from dog.dog_interface import DogPlayerInterface
 from dog.dog_actor import DogActor
 from random import randint
-
+from Baralho import Baralho
 
 class ActorInterface(DogPlayerInterface):
 
@@ -14,10 +14,12 @@ class ActorInterface(DogPlayerInterface):
         self.window = window
         self.dict_of_cards = {}
         self.list_of_cards_in_hand_local = []
-        self.list_of_cards_in_hand_remote1 = []
-        self.list_of_cards_in_hand_remote2 = []
-        self.list_of_cards_in_cheap = []
+        self.list_of_cards_in_hand_remote_right = []
+        self.list_of_cards_in_hand_remote_left = []
         self.slots_local = []
+        self.slots_remote_right = []
+        self.slots_remote_left = []
+        self.list_of_cards_in_cheap = []
         self.inicio_mao = 0
         self.loadCardImages()
         self.startMenu()
@@ -34,17 +36,17 @@ class ActorInterface(DogPlayerInterface):
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
         self.img0 = PhotoImage(file = f"menu_images/img0.png")
         button_start = self.canvas.create_image(270, 360, image=self.img0)
-        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_table())
+        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_match())
 
 
     def startMenu(self):
         self.setMenuCanvas() 
         self.createMenuDesign()
         self.window.resizable(False, False)
-        # player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
-        # self.dog_server_interface = DogActor()
-        # message = self.dog_server_interface.initialize(player_name,self)
-        # messagebox.showinfo(message=message)
+        player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
+        self.dog_server_interface = DogActor()
+        message = self.dog_server_interface.initialize(player_name,self)
+        messagebox.showinfo(message=message)
         self.window.mainloop()
 
     def setTableCanvas(self):
@@ -164,7 +166,7 @@ class ActorInterface(DogPlayerInterface):
     def addRemoteCard(self,card,x,y):
         self.canvas.create_image(x, y, image=self.dict_of_cards[card])
 
-    def connect(self):        
+    def start_match(self):        
         start_status = self.dog_server_interface.start_match(1)
         message = start_status.get_message()
         messagebox.showinfo(message=message)
