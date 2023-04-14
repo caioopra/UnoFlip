@@ -24,10 +24,31 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_left = []
         self.list_of_cards_in_cheap = []
         self.inicio_mao = 0
-        self.jogo = Jogo()
+        self.jogo = None
         self.loadCardImages()
         self.startMenu()
         
+    def receive_move(self, a_move: dict) -> None:
+        pass
+
+    def receive_start(self, start_status:str) -> None:
+        pass
+
+    def receive_withdrawal_notification(self) -> None:
+        pass
+
+    def start_match(self) -> None:        
+        start_status = self.dog_server_interface.start_match(1)
+        message = start_status.get_message()
+        messagebox.showinfo(message=message)
+        if message == 'Partida iniciada':
+            self.start_table()
+            jogadores = start_status.get_players()
+            print(jogadores)
+            id_jogador_local = start_status.get_local_id()
+            self.jogo = Jogo(jogadores,id_jogador_local)
+            # self.dog_server_interface.send_move()
+            
 
     def setMenuCanvas(self) -> None:
         self.canvas = Canvas(
@@ -148,6 +169,7 @@ class ActorInterface(DogPlayerInterface):
     def addCard(self) -> None:
         self.slots_local = []
 
+        
         func0 = lambda x:self.selectCard(self.slots_local[0])
         func1 = lambda x:self.selectCard(self.slots_local[1])
         func2 = lambda x:self.selectCard(self.slots_local[2])
@@ -167,15 +189,27 @@ class ActorInterface(DogPlayerInterface):
             
 
         
-    def addRemoteCard(self,card: str,x:int,y:int) -> None:
-        self.canvas.create_image(x, y, image=self.dict_of_cards[card])
+    def addRemoteCardRight(self) -> None:
+        self.slots_remote_right = []
 
-    def start_match(self) -> None:        
-        start_status = self.dog_server_interface.start_match(1)
-        message = start_status.get_message()
-        messagebox.showinfo(message=message)
-        if message == 'Partida iniciada':
-            self.start_table()
+        for i in range(5):
+            if i < len(self.list_of_cards_in_hand_remote_right):
+                self.slots_remote_right.append(self.list_of_cards_in_hand_remote_right[i])
+
+            if i <len(self.slots_remote_right):
+                identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[self.slots_remote_right[i]])
+                self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
+
+    def addRemoteCardLeft(self) -> None:
+        self.slots_remote_left = []
+
+        for i in range(5):
+            if i < len(self.list_of_cards_in_hand_remote_left):
+                self.slots_remote_left.append(self.list_of_cards_in_hand_remote_left[i])
+
+            if i <len(self.slots_remote_left):
+                identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[self.slots_remote_left[i]])
+                self.slots_remote_left[i] = (identificator,self.slots_remote_left[i])
 
     def delete_local(self) -> None:
         for k,i in enumerate(self.slots_local):
@@ -190,34 +224,20 @@ class ActorInterface(DogPlayerInterface):
     def start_table(self) -> None:
         self.setTableCanvas()
         self.createTableDesign()
-        
-        self.list_of_cards_in_hand_local.append('dark_34')
-        self.list_of_cards_in_hand_local.append('dark_17')
-        self.list_of_cards_in_hand_local.append('dark_63')
-        self.list_of_cards_in_hand_local.append('dark_47')
-        self.list_of_cards_in_hand_local.append('dark_30')
-        self.list_of_cards_in_hand_local.append('dark_4')
-        self.list_of_cards_in_hand_local.append('dark_47')
-        self.list_of_cards_in_hand_local.append('dark_21')
-        self.list_of_cards_in_hand_local.append('dark_57')
-        self.list_of_cards_in_hand_local.append('dark_63')
-        self.list_of_cards_in_hand_local.append('dark_41')
-        self.list_of_cards_in_hand_local.append('dark_39')
-        self.list_of_cards_in_hand_local.append('dark_4')
-        self.list_of_cards_in_hand_local.append('dark_12')
+
         self.addCard()
 
-        self.addRemoteCard(card='light_16_90',x=140,y=150)
-        self.addRemoteCard(card='light_26_90',x=140,y=255)
-        self.addRemoteCard(card='light_36_90',x=140,y=360)
-        self.addRemoteCard(card='light_24_90',x=140,y=465)
-        self.addRemoteCard(card='light_46_90',x=140,y=570)
+        self.list_of_cards_in_hand_remote_right.append('light_16_90')
+        self.list_of_cards_in_hand_remote_right.append('light_16_90')
+        self.list_of_cards_in_hand_remote_right.append('light_16_90')
+        self.addRemoteCardRight()
+        
 
-        self.addRemoteCard(card='light_16_270',x=1140,y=150)
-        self.addRemoteCard(card='light_26_270',x=1140,y=255)
-        self.addRemoteCard(card='light_36_270',x=1140,y=360)
-        self.addRemoteCard(card='light_24_270',x=1140,y=465)
-        self.addRemoteCard(card='light_46_270',x=1140,y=570)
+        self.list_of_cards_in_hand_remote_left.append('light_19_270')
+        self.list_of_cards_in_hand_remote_left.append('light_19_270')
+        self.list_of_cards_in_hand_remote_left.append('light_19_270')
+        self.addRemoteCardLeft()
+
 
 
 window = Window()
