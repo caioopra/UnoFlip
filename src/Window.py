@@ -6,6 +6,9 @@ class Window():
         self.window = Tk()
         self.createWindow()
 
-    def createWindow(self):
+    def createWindow(self) -> None:
         self.window.geometry("1280x720")
         self.window.configure(bg = "#ffffff")
+
+    def get_window(self) -> Tk:
+        return self.window

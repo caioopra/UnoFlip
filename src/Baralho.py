@@ -9,7 +9,10 @@ class Baralho():
         self.cartas = []
         self.cartas_jogadas = []
         self.criar_baralho()
-    def criar_baralho(self):
+
+
+
+    def criar_baralho(self) -> None:
         cores = ['amarelo','vermelho', 'azul','verde']
         cores2 = ['laranja','rosa', 'roxo', 'ciano']
         
@@ -50,11 +53,11 @@ class Baralho():
                 aux.append(face_inverter_ordem)
                 aux2.append(face_inverter_ordem2)
 
-            face_coringa1= FaceColoridaComPoder(f'light_{pos[i]+12}',cores[i],'inverter_ordem')
-            face_coring2 = FaceColoridaComPoder(f'dark_{pos[i]+12}',cores[i],'inverter_ordem')
-            for _ in range(2):
-                aux.append(face_inverter_ordem)
-                aux2.append(face_inverter_ordem2)
+            # face_coringa1= FaceColoridaComPoder(f'light_{pos[i]+12}',cores[i],'inverter_ordem')
+            # face_coring2 = FaceColoridaComPoder(f'dark_{pos[i]+12}',cores[i],'inverter_ordem')
+            # for _ in range(2):
+            #     aux.append(face_inverter_ordem)
+            #     aux2.append(face_inverter_ordem2)
         
             shuffle(aux)
             shuffle(aux2)
@@ -62,17 +65,11 @@ class Baralho():
                 self.cartas.append(Carta(aux[i],aux2[i]))
 
 
-    def embaralhar(self):
+    def embaralhar(self) -> None:
         shuffle(self.cartas)
 
-    
-    def dar_cartas_iniciais(self):
-        pass
 
-    def comprar_carta(self):
+    def comprar_carta(self) -> None:
         carta = self.cartas.pop(0)
         self.cartas_jogadas.append(carta)
         return carta
-
-a = Baralho()
-a.criar_baralho()

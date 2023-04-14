@@ -7,11 +7,14 @@ from dog.dog_interface import DogPlayerInterface
 from dog.dog_actor import DogActor
 from random import randint
 from Baralho import Baralho
+from Jogo import Jogo
+from Jogador import Jogador
+
 
 class ActorInterface(DogPlayerInterface):
 
-    def __init__(self,window) -> None:
-        self.window = window
+    def __init__(self,window: Window) -> None:
+        self.window = window.get_window()
         self.dict_of_cards = {}
         self.list_of_cards_in_hand_local = []
         self.list_of_cards_in_hand_remote_right = []
@@ -21,17 +24,18 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_left = []
         self.list_of_cards_in_cheap = []
         self.inicio_mao = 0
+        self.jogo = Jogo()
         self.loadCardImages()
         self.startMenu()
         
 
-    def setMenuCanvas(self):
+    def setMenuCanvas(self) -> None:
         self.canvas = Canvas(
             self.window,bg = "#ffffff",height = 720,width = 1280,bd = 0,highlightthickness = 0,relief = "ridge")
         self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 
-    def createMenuDesign(self):
+    def createMenuDesign(self) -> None:
         self.background_img = PhotoImage(file = f"menu_images/background.png")
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
         self.img0 = PhotoImage(file = f"menu_images/img0.png")
@@ -39,7 +43,7 @@ class ActorInterface(DogPlayerInterface):
         self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_match())
 
 
-    def startMenu(self):
+    def startMenu(self) -> None:
         self.setMenuCanvas() 
         self.createMenuDesign()
         self.window.resizable(False, False)
@@ -49,12 +53,12 @@ class ActorInterface(DogPlayerInterface):
         messagebox.showinfo(message=message)
         self.window.mainloop()
 
-    def setTableCanvas(self):
+    def setTableCanvas(self) -> None:
         self.canvas = Canvas(self.window,bg = "#ffffff",height = 720,width = 1280,bd = 0,highlightthickness = 0,relief = "ridge")
         self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 
-    def createTableDesign(self):
+    def createTableDesign(self) -> None:
         self.background_img = PhotoImage(file = f"table_images/background.png")
         background = self.canvas.create_image(0, 0, image=self.background_img,anchor="nw")
 
@@ -81,7 +85,7 @@ class ActorInterface(DogPlayerInterface):
         button_card = self.canvas.create_image(500, 300, image=self.dict_of_cards['light_0'])
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
     
-    def loadCardImages(self):
+    def loadCardImages(self) -> None:
         for i in range(64):
             image=Image.open(f'UNO_cards_light/light_{i}.png')
             img=image.resize((100, 150))
@@ -108,7 +112,7 @@ class ActorInterface(DogPlayerInterface):
             self.dict_of_cards[f"dark_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
 
 
-    def selectCard(self,card):
+    def selectCard(self,card) -> None:
         try:
             self.canvas.delete(self.button_cheap)
         except:
@@ -126,7 +130,7 @@ class ActorInterface(DogPlayerInterface):
     
         self.addCard()
 
-    def mover_mao(self,direcao):
+    def mover_mao(self,direcao: int) -> None:
         for k,i in enumerate(self.slots_local):
             self.canvas.delete(self.slots_local[k][0])
         
@@ -141,7 +145,7 @@ class ActorInterface(DogPlayerInterface):
         
         self.addCard()
 
-    def addCard(self):
+    def addCard(self) -> None:
         self.slots_local = []
 
         func0 = lambda x:self.selectCard(self.slots_local[0])
@@ -163,27 +167,27 @@ class ActorInterface(DogPlayerInterface):
             
 
         
-    def addRemoteCard(self,card,x,y):
+    def addRemoteCard(self,card: str,x:int,y:int) -> None:
         self.canvas.create_image(x, y, image=self.dict_of_cards[card])
 
-    def start_match(self):        
+    def start_match(self) -> None:        
         start_status = self.dog_server_interface.start_match(1)
         message = start_status.get_message()
         messagebox.showinfo(message=message)
         if message == 'Partida iniciada':
             self.start_table()
 
-    def delete_local(self):
+    def delete_local(self) -> None:
         for k,i in enumerate(self.slots_local):
             self.canvas.delete(self.slots_local[k][0])
 
-    def comprar(self):
+    def comprar(self) -> None:
         self.delete_local()
         a = randint(1,63)
         self.list_of_cards_in_hand_local.insert(0,f'dark_{a}')
         self.addCard()
 
-    def start_table(self):
+    def start_table(self) -> None:
         self.setTableCanvas()
         self.createTableDesign()
         
@@ -217,4 +221,4 @@ class ActorInterface(DogPlayerInterface):
 
 
 window = Window()
-tela = ActorInterface(window.window)
+tela = ActorInterface(window)
