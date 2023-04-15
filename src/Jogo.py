@@ -52,12 +52,15 @@ class Jogo:
         jogada ={}
 
         if tipo_jogada == 'init':
-            jogada['baralho'] = self.baralho.tojson()
+            jogada['match_status'] = 'next'
+            jogada['tipo_jogada'] = 'jogada_inicial'
+            jogada['baralho'] = self.baralho.to_json()
             jogada['jogador_1'] = self.jogadores[0].to_json()
-            jogada['jogador_2'] = self.jogadores[1].to_json()      
-            jogada['jogador_3'] = self.jogadores[2].to_json()      
+            # jogada['jogador_2'] = self.jogadores[1].to_json()      
+            # jogada['jogador_3'] = self.jogadores[2].to_json()      
             jogada['jogador_atual'] = self.get_jogador_atual()
             jogada['direcao'] = self.get_direcao()
+        return jogada
         
 
     

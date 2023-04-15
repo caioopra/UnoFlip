@@ -48,8 +48,8 @@ class ActorInterface(DogPlayerInterface):
             id_jogador_local = start_status.get_local_id()
             self.jogo.set_local_id(id_jogador_local)
             self.jogo.criar_jogadores(jogadores)
-            # dict_inicial = self.jogo.transform_play_to_dict('init')
-            # self.dog_server_interface.send_move(dict_inicial)
+            dict_inicial = self.jogo.transform_play_to_dict('init')
+            self.dog_server_interface.send_move(dict_inicial)
             self.start_table()
 
     def setMenuCanvas(self) -> None:
