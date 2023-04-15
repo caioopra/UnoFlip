@@ -29,7 +29,8 @@ class ActorInterface(DogPlayerInterface):
         self.startMenu()
         
     def receive_move(self, a_move: dict) -> None:
-        pass
+        if a_move['tipo'] == 'init':
+            self.start_table()
 
     def receive_start(self, start_status:str) -> None:
         pass
@@ -38,7 +39,7 @@ class ActorInterface(DogPlayerInterface):
         pass
 
     def start_match(self) -> None:        
-        start_status = self.dog_server_interface.start_match(1)
+        start_status = self.dog_server_interface.start_match(3)
         message = start_status.get_message()
         messagebox.showinfo(message=message)
 
