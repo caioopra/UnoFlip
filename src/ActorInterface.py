@@ -24,7 +24,7 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_left = []
         self.list_of_cards_in_cheap = []
         self.inicio_mao = 0
-        self.jogo = None
+        self.jogo = Jogo()
         self.loadCardImages()
         self.startMenu()
         
@@ -41,14 +41,16 @@ class ActorInterface(DogPlayerInterface):
         start_status = self.dog_server_interface.start_match(1)
         message = start_status.get_message()
         messagebox.showinfo(message=message)
+
         if message == 'Partida iniciada':
-            self.start_table()
+
             jogadores = start_status.get_players()
-            print(jogadores)
             id_jogador_local = start_status.get_local_id()
-            self.jogo = Jogo(jogadores,id_jogador_local)
-            # self.dog_server_interface.send_move()
-            
+            self.jogo.set_local_id(id_jogador_local)
+            self.jogo.criar_jogadores(jogadores)
+            # dict_inicial = self.jogo.transform_play_to_dict('init')
+            # self.dog_server_interface.send_move(dict_inicial)
+            self.start_table()
 
     def setMenuCanvas(self) -> None:
         self.canvas = Canvas(
@@ -152,8 +154,7 @@ class ActorInterface(DogPlayerInterface):
         self.addCard()
 
     def mover_mao(self,direcao: int) -> None:
-        for k,i in enumerate(self.slots_local):
-            self.canvas.delete(self.slots_local[k][0])
+        self.delete_local()
         
         if direcao ==1:
             if self.inicio_mao+6<len(self.list_of_cards_in_hand_local):

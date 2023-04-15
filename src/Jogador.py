@@ -18,3 +18,5 @@ class Jogador():
     def get_mao(self) -> list:
         return self.mao
 
+    def to_json(self) -> dict:
+        return json.dumps(self, default=lambda o:o.__dict__)
