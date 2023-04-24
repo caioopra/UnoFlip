@@ -3,6 +3,7 @@ from FaceNumerica import FaceNumerica
 from FaceColoridaComPoder import FaceColoridaComPoder
 from FaceCoringa import FaceCoringa
 from random import shuffle
+import json
 class Baralho():
     
     def __init__(self) -> None:
@@ -73,3 +74,7 @@ class Baralho():
         carta = self.cartas.pop(0)
         self.cartas_jogadas.append(carta)
         return carta
+
+    def to_json(self) -> dict:
+        return json.dumps(self, default=lambda o:o.__dict__)
+
