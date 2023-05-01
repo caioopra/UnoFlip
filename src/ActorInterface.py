@@ -241,7 +241,7 @@ class ActorInterface(DogPlayerInterface):
 
     def comprar(self) -> None:
         if self.jogo.local_id == self.jogo.jogador_atual.id:
-            self.jogo.darCarta(self.jogo.jogadores[self.hand_local],1)
+            self.jogo.comprarCarta()
             self.atualizarInterface()
         else:
             print('nao e sua vez')
