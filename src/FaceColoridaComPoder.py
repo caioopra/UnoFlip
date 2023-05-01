@@ -2,10 +2,10 @@ from FaceColorida import FaceColorida
 
 class FaceColoridaComPoder(FaceColorida):
 
-    def __init__(self,id:str,cor:str,poder:str,tipo) -> None:
+    def __init__(self,id:str,cor:str,simbolo:str,tipo) -> None:
         super().__init__(id,cor)
-        self.poder = poder
+        self.simbolo = simbolo
         self.tipo = tipo
 
-    def get_poder(self) -> str:
-        return self.poder
+    def get_simbolo(self) -> str:
+        return self.simbolo

@@ -2,10 +2,10 @@ from FaceColorida import FaceColorida
 
 class FaceNumerica(FaceColorida):
 
-    def __init__(self,id:str,cor:str,numero:int,tipo) -> None:
+    def __init__(self,id:str,cor:str,simbolo:int,tipo) -> None:
         super().__init__(id,cor)
-        self.numero = numero
+        self.simbolo = simbolo
         self.tipo = tipo
 
-    def get_numero(self) -> int:
-        return self.numero
+    def get_simbolo(self) -> int:
+        return self.simbolo

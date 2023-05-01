@@ -154,19 +154,12 @@ class ActorInterface(DogPlayerInterface):
 
 
     def jogarCarta(self,card) -> None:
-        if self.jogo.local_id == self.jogo.jogador_atual.id:
-            try:
-                self.canvas.delete(self.button_cheap)
-            except:
-                pass
-
-            self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[card[1].get_face_atual().get_id()])
-
-            self.delete_local()       
-
+        if self.jogo.local_id == self.jogo.jogador_atual.id:           
+   
             self.jogo.jogarCarta(card,self.hand_local)
 
-            self.addCard()
+            self.atualizarInterface()
+
         else:
             print('nao e sua vez')
 
@@ -183,7 +176,7 @@ class ActorInterface(DogPlayerInterface):
                 self.inicio_mao -=1
 
         
-        self.addCard()
+        self.atualizarInterface()
 
     def addCard(self) -> None:
         self.slots_local = []
@@ -228,28 +221,51 @@ class ActorInterface(DogPlayerInterface):
                 identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].get_verso().get_id()}_90'])
                 self.slots_remote_left[i] = (identificator,self.slots_remote_left[i])
 
+
+
+    def addCheap(self):
+        try:
+                self.canvas.delete(self.button_cheap)
+        except:
+                pass
+
+        carta = self.jogo.mesa.getUltimaCarta()
+
+        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[carta.get_face_atual().get_id()])
+
+
     def delete_local(self) -> None:
         for k,i in enumerate(self.slots_local):
             self.canvas.delete(self.slots_local[k][0])
 
+
     def comprar(self) -> None:
         if self.jogo.local_id == self.jogo.jogador_atual.id:
-            self.delete_local()
             self.jogo.darCarta(self.jogo.jogadores[self.hand_local],1)
-            self.addCard()
+            self.atualizarInterface()
         else:
             print('nao e sua vez')
 
+
     def start_table(self) -> None:
+
         self.setTableCanvas()
         self.createTableDesign()
+
+        self.atualizarInterface()
+
+
+
+    def atualizarInterface(self):
+        self.delete_local()
+
+        self.addCheap()
 
         self.addCard()
 
         self.addRemoteCardRight()
         
         self.addRemoteCardLeft()
-
 
 
 window = Window()
