@@ -9,16 +9,16 @@ from random import randint
 from Baralho import Baralho
 from Jogo import Jogo
 from Jogador import Jogador
-
+import json
 
 class ActorInterface(DogPlayerInterface):
 
     def __init__(self,window: Window) -> None:
         self.window = window.get_window()
         self.dict_of_cards = {}
-        self.list_of_cards_in_hand_local = []
-        self.list_of_cards_in_hand_remote_right = []
-        self.list_of_cards_in_hand_remote_left = []
+        self.hand_local = 0
+        self.hand_remote_left = 0
+        self.hand_remote_right = 0
         self.slots_local = []
         self.slots_remote_right = []
         self.slots_remote_left = []
@@ -30,10 +30,19 @@ class ActorInterface(DogPlayerInterface):
         
     def receive_move(self, a_move: dict) -> None:
         if a_move['tipo'] == 'init':
+            self.jogo.transform_dict_to_object(a_move)
+            jogadores = self.jogo.get_jogadores()
+            for k,jogador in enumerate(jogadores):
+                if jogador.id ==self.jogo.local_id:
+                    self.hand_local=k
+                    self.hand_remote_right= (k+1)%3
+                    self.hand_remote_left= k-1
+            self.jogo.jogador_atual = self.jogo.jogadores[0]
             self.start_table()
+            
 
     def receive_start(self, start_status:str) -> None:
-        pass
+        self.jogo.set_local_id(start_status.get_local_id())
 
     def receive_withdrawal_notification(self) -> None:
         pass
@@ -44,14 +53,21 @@ class ActorInterface(DogPlayerInterface):
         messagebox.showinfo(message=message)
 
         if message == 'Partida iniciada':
-
             jogadores = start_status.get_players()
             id_jogador_local = start_status.get_local_id()
             self.jogo.set_local_id(id_jogador_local)
             self.jogo.criar_jogadores(jogadores)
             dict_inicial = self.jogo.transform_play_to_dict('init')
             self.dog_server_interface.send_move(dict_inicial)
+            jogadores = self.jogo.get_jogadores()
+            for k,jogador in enumerate(jogadores):
+                if jogador.id ==self.jogo.local_id:
+                    self.hand_local=k
+                    self.hand_remote_right= (k+1)%3
+                    self.hand_remote_left= k-1
+            self.jogo.jogador_atual = self.jogo.jogadores[0]
             self.start_table()
+            
 
     def setMenuCanvas(self) -> None:
         self.canvas = Canvas(
@@ -136,29 +152,30 @@ class ActorInterface(DogPlayerInterface):
             self.dict_of_cards[f"dark_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
 
 
-    def selectCard(self,card) -> None:
-        try:
-            self.canvas.delete(self.button_cheap)
-        except:
-            pass
 
-        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[card[1]])
+    def jogarCarta(self,card) -> None:
+        if self.jogo.local_id == self.jogo.jogador_atual.id:
+            try:
+                self.canvas.delete(self.button_cheap)
+            except:
+                pass
 
-        self.delete_local()       
+            self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[card[1].get_face_atual().get_id()])
 
-        for k, j in enumerate(self.list_of_cards_in_hand_local):
-            if card[1] == j:
+            self.delete_local()       
 
-                del self.list_of_cards_in_hand_local[k]
-                break
-    
-        self.addCard()
+            self.jogo.jogarCarta(card,self.hand_local)
+
+            self.addCard()
+        else:
+            print('nao e sua vez')
+
 
     def mover_mao(self,direcao: int) -> None:
         self.delete_local()
         
         if direcao ==1:
-            if self.inicio_mao+6<len(self.list_of_cards_in_hand_local):
+            if self.inicio_mao+6<len(self.jogo.jogadores[self.hand_local].get_mao()):
                 self.inicio_mao +=1
 
         if direcao ==0:
@@ -172,45 +189,43 @@ class ActorInterface(DogPlayerInterface):
         self.slots_local = []
 
         
-        func0 = lambda x:self.selectCard(self.slots_local[0])
-        func1 = lambda x:self.selectCard(self.slots_local[1])
-        func2 = lambda x:self.selectCard(self.slots_local[2])
-        func3 = lambda x:self.selectCard(self.slots_local[3])
-        func4 = lambda x:self.selectCard(self.slots_local[4])
-        func5 = lambda x:self.selectCard(self.slots_local[5])
+        func0 = lambda x:self.jogarCarta(self.slots_local[0])
+        func1 = lambda x:self.jogarCarta(self.slots_local[1])
+        func2 = lambda x:self.jogarCarta(self.slots_local[2])
+        func3 = lambda x:self.jogarCarta(self.slots_local[3])
+        func4 = lambda x:self.jogarCarta(self.slots_local[4])
+        func5 = lambda x:self.jogarCarta(self.slots_local[5])
         funcs = [func0,func1,func2,func3,func4,func5]
         
 
         for i in range(6):
-            if (i+self.inicio_mao) < len(self.list_of_cards_in_hand_local):
-                self.slots_local.append(self.list_of_cards_in_hand_local[i+self.inicio_mao])
+            if (i+self.inicio_mao) < len(self.jogo.jogadores[self.hand_local].get_mao()):
+                self.slots_local.append(self.jogo.jogadores[self.hand_local].get_mao()[i+self.inicio_mao])
             if i < len(self.slots_local):
-                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i]])
+                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].get_face_atual().get_id()])
                 self.slots_local[i] = (button_card,self.slots_local[i])
                 self.canvas.tag_bind(button_card, "<Button-1>", funcs[i])
             
-
-        
     def addRemoteCardRight(self) -> None:
         self.slots_remote_right = []
 
         for i in range(5):
-            if i < len(self.list_of_cards_in_hand_remote_right):
-                self.slots_remote_right.append(self.list_of_cards_in_hand_remote_right[i])
+            if i < len(self.jogo.jogadores[self.hand_remote_right].get_mao()):
+                self.slots_remote_right.append(self.jogo.jogadores[self.hand_remote_right].get_mao()[i])
 
             if i <len(self.slots_remote_right):
-                identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[self.slots_remote_right[i]])
+                identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].get_verso().get_id()}_270'])
                 self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
 
     def addRemoteCardLeft(self) -> None:
         self.slots_remote_left = []
 
         for i in range(5):
-            if i < len(self.list_of_cards_in_hand_remote_left):
-                self.slots_remote_left.append(self.list_of_cards_in_hand_remote_left[i])
+            if i < len(self.jogo.jogadores[self.hand_remote_left].get_mao()):
+                self.slots_remote_left.append(self.jogo.jogadores[self.hand_remote_left].get_mao()[i])
 
             if i <len(self.slots_remote_left):
-                identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[self.slots_remote_left[i]])
+                identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].get_verso().get_id()}_90'])
                 self.slots_remote_left[i] = (identificator,self.slots_remote_left[i])
 
     def delete_local(self) -> None:
@@ -218,10 +233,12 @@ class ActorInterface(DogPlayerInterface):
             self.canvas.delete(self.slots_local[k][0])
 
     def comprar(self) -> None:
-        self.delete_local()
-        a = randint(1,63)
-        self.list_of_cards_in_hand_local.insert(0,f'dark_{a}')
-        self.addCard()
+        if self.jogo.local_id == self.jogo.jogador_atual.id:
+            self.delete_local()
+            self.jogo.darCarta(self.jogo.jogadores[self.hand_local],1)
+            self.addCard()
+        else:
+            print('nao e sua vez')
 
     def start_table(self) -> None:
         self.setTableCanvas()
@@ -229,15 +246,8 @@ class ActorInterface(DogPlayerInterface):
 
         self.addCard()
 
-        self.list_of_cards_in_hand_remote_right.append('light_16_90')
-        self.list_of_cards_in_hand_remote_right.append('light_16_90')
-        self.list_of_cards_in_hand_remote_right.append('light_16_90')
         self.addRemoteCardRight()
         
-
-        self.list_of_cards_in_hand_remote_left.append('light_19_270')
-        self.list_of_cards_in_hand_remote_left.append('light_19_270')
-        self.list_of_cards_in_hand_remote_left.append('light_19_270')
         self.addRemoteCardLeft()
 
 
