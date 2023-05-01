@@ -64,9 +64,8 @@ class Jogo:
 
     def jogarCarta(self,carta,index):
         if not self.comprou_carta and not self.jogou_carta:
-            valida =self.verificarValida(carta[1])
-            if valida:
-                self.tentarColocarCartaNaMesa(carta[1],index)
+
+            self.tentarColocarCartaNaMesa(carta[1],index)
                      
 
         else:
@@ -74,15 +73,17 @@ class Jogo:
             
 
     def tentarColocarCartaNaMesa(self,carta,index):
+        valida =self.verificarValida(carta)
 
-        for k, j in enumerate(self.jogadores[index].mao):
-            if carta is j:
-                self.mesa.setUltimaCarta(j)
-                del self.jogadores[index].mao[k]
-                self.jogou_carta = True
-                break
-
-
+        if valida:
+            for k, j in enumerate(self.jogadores[index].mao):
+                if carta is j:
+                    self.mesa.setUltimaCarta(j)
+                    del self.jogadores[index].mao[k]
+                    self.jogou_carta = True
+                    break
+        else:
+            print('nao pode jogar essa carta')
 
 
 
@@ -98,7 +99,6 @@ class Jogo:
 
         elif self.mesa.ultima_carta.face_atual.get_simbolo() == carta.face_atual.get_simbolo():
 
- 
             return True 
         
         else:
@@ -111,11 +111,18 @@ class Jogo:
 
 
     def comprarCarta(self):
-        pass
+        
+        if not (self.comprou_carta or self.jogou_carta):
+            self.darCarta(self.jogador_atual,1)
 
+            self.comprou_carta = True
 
+            carta = self.jogador_atual.mao[0]
 
+            self.tentarColocarCartaNaMesa(carta)
 
+        else:
+            print('ja atuou')
 
 
 
@@ -131,6 +138,7 @@ class Jogo:
             jogada['jogador_2'] = self.jogadores[1].to_json()      
             jogada['jogador_3'] = self.jogadores[2].to_json()      
             jogada['jogador_atual'] = self.get_jogador_atual()
+            jogada['mesa'] = self.mesa.ultima_carta.to_json()
             
         return jogada
         
@@ -153,6 +161,23 @@ class Jogo:
             baralho_list.append(Carta(frente,verso))
 
         self.mesa.baralho.cartas = baralho_list
+        
+        carta_mesa = dict_json['mesa']
+
+        frente = carta_mesa['frente']
+        verso = carta_mesa['verso']
+        if frente['tipo'] == 'numerica':
+            frente = FaceNumerica(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+        elif frente['tipo'] == 'colorida_poder':
+            frente = FaceColoridaComPoder(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+        if verso['tipo'] == 'numerica':
+            verso = FaceNumerica(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+        elif verso['tipo'] == 'colorida_poder':
+            verso = FaceColoridaComPoder(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+        
+        carta_mesa = Carta(frente,verso)        
+        
+        self.mesa.ultima_carta = carta_mesa
 
         jogador_1 =dict_json['jogador_1']
         id_jogador = jogador_1['id']
