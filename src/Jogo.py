@@ -18,8 +18,10 @@ class Jogo:
         self.proximo_jogador = None
         self.jogou_carta = False
         self.comprou_carta = False
-        self.grtou_uno = False
+        self.gritou_uno = False
+        self.dict_jogada = {}
         self.mesa = Mesa(Baralho())
+
 
     def get_jogadores(self) -> list:
         return self.jogadores
@@ -76,12 +78,15 @@ class Jogo:
         valida =self.verificarValida(carta)
 
         if valida:
+            self.dict_jogada = {}
             for k, j in enumerate(self.jogadores[index].mao):
                 if carta is j:
                     self.mesa.setUltimaCarta(j)
                     del self.jogadores[index].mao[k]
                     self.jogou_carta = True
                     break
+
+                
         else:
             print('nao pode jogar essa carta')
 
@@ -117,9 +122,12 @@ class Jogo:
 
             self.comprou_carta = True
 
-            carta = self.jogador_atual.mao[0]
+            self.dict_jogada['tipo'] = 'comprar'
+            self.dict_jogada['match_status'] = 'progress'
 
-            self.tentarColocarCartaNaMesa(carta)
+            # carta = self.jogador_atual.mao[0]
+
+            # self.tentarColocarCartaNaMesa(carta)
 
         else:
             print('ja atuou')
@@ -132,7 +140,7 @@ class Jogo:
 
         if tipo_jogada == 'init':
             jogada['tipo'] = 'init'
-            jogada['match_status'] = 'next'
+            jogada['match_status'] = 'progress'
             jogada['baralho'] = self.mesa.baralho.to_json()
             jogada['jogador_1'] = self.jogadores[0].to_json()
             jogada['jogador_2'] = self.jogadores[1].to_json()      

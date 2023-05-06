@@ -29,6 +29,7 @@ class ActorInterface(DogPlayerInterface):
         self.startMenu()
         
     def receive_move(self, a_move: dict) -> None:
+        print(a_move['tipo'])
         if a_move['tipo'] == 'init':
             self.jogo.transform_dict_to_object(a_move)
             jogadores = self.jogo.get_jogadores()
@@ -39,9 +40,12 @@ class ActorInterface(DogPlayerInterface):
                     self.hand_remote_left= k-1
             self.jogo.jogador_atual = self.jogo.jogadores[0]
             self.start_table()
-            
+        elif a_move['tipo'] == 'comprar':
+            self.jogo.comprarCarta()
+            self.atualizarInterface()
+            print("recebi")
 
-    def receive_start(self, start_status:str) -> None:
+    def receive_start(self, start_status) -> None:
         self.jogo.set_local_id(start_status.get_local_id())
 
     def receive_withdrawal_notification(self) -> None:
@@ -164,6 +168,19 @@ class ActorInterface(DogPlayerInterface):
             print('nao e sua vez')
 
 
+    def comprar(self) -> None:
+        if self.jogo.local_id == self.jogo.jogador_atual.id:
+            self.jogo.comprarCarta()
+            print('mandar pro dog')
+            self.dog_server_interface.send_move(self.jogo.dict_jogada)
+            print('depois de mandar')
+            self.atualizarInterface()
+        else:
+            print('nao e sua vez')
+
+
+
+
     def mover_mao(self,direcao: int) -> None:
         self.delete_local()
         
@@ -239,12 +256,7 @@ class ActorInterface(DogPlayerInterface):
             self.canvas.delete(self.slots_local[k][0])
 
 
-    def comprar(self) -> None:
-        if self.jogo.local_id == self.jogo.jogador_atual.id:
-            self.jogo.comprarCarta()
-            self.atualizarInterface()
-        else:
-            print('nao e sua vez')
+
 
 
     def start_table(self) -> None:
