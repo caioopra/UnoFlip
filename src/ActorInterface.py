@@ -29,7 +29,6 @@ class ActorInterface(DogPlayerInterface):
         self.startMenu()
         
     def receive_move(self, a_move: dict) -> None:
-        print(a_move['tipo'])
         if a_move['tipo'] == 'init':
             self.jogo.transform_dict_to_object(a_move)
             jogadores = self.jogo.get_jogadores()
@@ -39,11 +38,18 @@ class ActorInterface(DogPlayerInterface):
                     self.hand_remote_right= (k+1)%3
                     self.hand_remote_left= k-1
             self.jogo.jogador_atual = self.jogo.jogadores[0]
+            self.jogo.proximo_jogador =self.jogo.jogadores[1]
             self.start_table()
         elif a_move['tipo'] == 'comprar':
             self.jogo.comprarCarta()
             self.atualizarInterface()
-            print("recebi")
+        elif a_move['tipo'] == 'passar':
+            self.jogo.passarVez()
+            print('PASSOU')
+
+        print()
+        for jogadores in self.jogo.jogadores:
+            print(jogadores.id)
 
     def receive_start(self, start_status) -> None:
         self.jogo.set_local_id(start_status.get_local_id())
@@ -58,6 +64,7 @@ class ActorInterface(DogPlayerInterface):
 
         if message == 'Partida iniciada':
             jogadores = start_status.get_players()
+            print(jogadores)
             id_jogador_local = start_status.get_local_id()
             self.jogo.set_local_id(id_jogador_local)
             self.jogo.criar_jogadores(jogadores)
@@ -70,6 +77,7 @@ class ActorInterface(DogPlayerInterface):
                     self.hand_remote_right= (k+1)%3
                     self.hand_remote_left= k-1
             self.jogo.jogador_atual = self.jogo.jogadores[0]
+            self.jogo.proximo_jogador =self.jogo.jogadores[1]
             self.start_table()
             
 
@@ -113,7 +121,7 @@ class ActorInterface(DogPlayerInterface):
 
         self.img1 = PhotoImage(file = f"table_images/Button(2).png")
         button_passar_vez = self.canvas.create_image(800, 300, image=self.img1)
-        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: print('Passou vez'))
+        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.passarVez())
         
 
         self.img2 = PhotoImage(file = f"table_images/seta_esquerda.png")
@@ -169,11 +177,10 @@ class ActorInterface(DogPlayerInterface):
 
 
     def comprar(self) -> None:
+        print(self.jogo.local_id)
         if self.jogo.local_id == self.jogo.jogador_atual.id:
             self.jogo.comprarCarta()
-            print('mandar pro dog')
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
-            print('depois de mandar')
             self.atualizarInterface()
         else:
             print('nao e sua vez')
@@ -191,9 +198,18 @@ class ActorInterface(DogPlayerInterface):
         if direcao ==0:
             if self.inicio_mao > 0:
                 self.inicio_mao -=1
-
-        
+       
         self.atualizarInterface()
+
+    def passarVez(self):
+        print('atual',self.jogo.jogador_atual.id)
+        if self.jogo.local_id == self.jogo.jogador_atual.id: 
+            print('antes',self.jogo.jogador_atual.ordem)
+            self.jogo.passarVez()
+            print('depois',self.jogo.jogador_atual.ordem)
+            self.dog_server_interface.send_move(self.jogo.dict_jogada)
+        else:
+            print('nao e sua vez')
 
     def addCard(self) -> None:
         self.slots_local = []
