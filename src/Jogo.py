@@ -133,6 +133,20 @@ class Jogo:
             print('ja atuou')
 
 
+    def passarVez(self):
+        self.dict_jogada = {}
+        for k,jogador in enumerate(self.jogadores):
+            print(k)
+            if jogador.id ==self.jogador_atual.id:
+                index = (k+1)%3
+                self.jogador_atual = self.proximo_jogador
+                self.proximo_jogador = self.jogadores[index]
+                print('proximo:', self.proximo_jogador.id)
+        self.dict_jogada['tipo'] = 'passar'
+        self.dict_jogada['match_status'] = 'next'
+
+        self.jogou_carta = False
+        self.comprou_carta = False
 
     def transform_play_to_dict(self, tipo_jogada) -> dict:
         
