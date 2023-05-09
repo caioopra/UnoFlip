@@ -64,35 +64,39 @@ class Jogo:
             jogador.gritou_uno = False
 
 
-    def jogarCarta(self,carta,index):
+    def jogarCarta(self,index):
+
         if not self.comprou_carta and not self.jogou_carta:
 
-            self.tentarColocarCartaNaMesa(carta[1],index)
-                     
+            self.tentarColocarCartaNaMesa(index)
+                    
 
         else:
             print('voce ja atuou nesse turno')
             
 
-    def tentarColocarCartaNaMesa(self,carta,index):
-        valida =self.verificarValida(carta)
+    def tentarColocarCartaNaMesa(self,index):
+        valida =self.verificarValida(index)
 
         if valida:
             self.dict_jogada = {}
-            for k, j in enumerate(self.jogadores[index].mao):
-                if carta is j:
-                    self.mesa.setUltimaCarta(j)
-                    del self.jogadores[index].mao[k]
-                    self.jogou_carta = True
-                    break
+            self.dict_jogada['tipo'] = 'jogar'
+            self.dict_jogada['index'] = index
+            self.dict_jogada['match_status'] = 'progress'
+            self.mesa.setUltimaCarta(self.jogador_atual.mao[index])
+            del self.jogador_atual.mao[index]
+            self.jogou_carta = True
 
-                
+
+
         else:
             print('nao pode jogar essa carta')
 
 
 
-    def verificarValida(self,carta):
+    def verificarValida(self,index):
+
+        carta = self.jogador_atual.mao[index]
 
         if isinstance(carta.face_atual,FaceCoringa):
 

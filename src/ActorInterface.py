@@ -43,6 +43,11 @@ class ActorInterface(DogPlayerInterface):
         elif a_move['tipo'] == 'comprar':
             self.jogo.comprarCarta()
             self.atualizarInterface()
+        elif a_move['tipo'] == 'jogar':
+            index = a_move['index']
+            self.jogo.jogarCarta(index)
+            self.atualizarInterface()
+        
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
             print('PASSOU')
@@ -165,15 +170,7 @@ class ActorInterface(DogPlayerInterface):
 
 
 
-    def jogarCarta(self,card) -> None:
-        if self.jogo.local_id == self.jogo.jogador_atual.id:           
-   
-            self.jogo.jogarCarta(card,self.hand_local)
 
-            self.atualizarInterface()
-
-        else:
-            print('nao e sua vez')
 
 
     def comprar(self) -> None:
@@ -204,10 +201,23 @@ class ActorInterface(DogPlayerInterface):
     def passarVez(self):
         print('atual',self.jogo.jogador_atual.id)
         if self.jogo.local_id == self.jogo.jogador_atual.id: 
-            print('antes',self.jogo.jogador_atual.ordem)
+            
             self.jogo.passarVez()
-            print('depois',self.jogo.jogador_atual.ordem)
+
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
+        else:
+            print('nao e sua vez')
+
+    def jogarCarta(self,index) -> None:
+        if self.jogo.local_id == self.jogo.jogador_atual.id:           
+   
+            self.jogo.jogarCarta(self.inicio_mao+index)
+            
+            self.dog_server_interface.send_move(self.jogo.dict_jogada)
+
+
+            self.atualizarInterface()
+
         else:
             print('nao e sua vez')
 
@@ -215,12 +225,12 @@ class ActorInterface(DogPlayerInterface):
         self.slots_local = []
 
         
-        func0 = lambda x:self.jogarCarta(self.slots_local[0])
-        func1 = lambda x:self.jogarCarta(self.slots_local[1])
-        func2 = lambda x:self.jogarCarta(self.slots_local[2])
-        func3 = lambda x:self.jogarCarta(self.slots_local[3])
-        func4 = lambda x:self.jogarCarta(self.slots_local[4])
-        func5 = lambda x:self.jogarCarta(self.slots_local[5])
+        func0 = lambda x:self.jogarCarta(0)
+        func1 = lambda x:self.jogarCarta(1)
+        func2 = lambda x:self.jogarCarta(2)
+        func3 = lambda x:self.jogarCarta(3)
+        func4 = lambda x:self.jogarCarta(4)
+        func5 = lambda x:self.jogarCarta(5)
         funcs = [func0,func1,func2,func3,func4,func5]
         
 
