@@ -43,6 +43,7 @@ class ActorInterface(DogPlayerInterface):
         elif a_move['tipo'] == 'comprar':
             self.jogo.comprarCarta()
             self.atualizarInterface()
+            
         elif a_move['tipo'] == 'jogar':
             index = a_move['index']
             self.jogo.jogarCarta(index)

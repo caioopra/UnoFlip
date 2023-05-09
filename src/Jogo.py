@@ -85,6 +85,7 @@ class Jogo:
             self.dict_jogada['match_status'] = 'progress'
             self.mesa.setUltimaCarta(self.jogador_atual.mao[index])
             del self.jogador_atual.mao[index]
+            self.aplicarEfeito(index)
             self.jogou_carta = True
 
 
@@ -114,9 +115,19 @@ class Jogo:
             return False
 
 
-    def aplicarEfeito(self):
-        pass
-            
+    def aplicarEfeito(self,index):
+        carta = self.jogador_atual.mao[index]
+        
+        if (isinstance(carta.frente, FaceNumerica) or isinstance(carta.frente, FaceColoridaComPoder)):
+            efeito = carta.frente.simbolo
+            if efeito == 'mais_um':
+                self.darCarta(self.proximo_jogador,1)
+            elif efeito == 'pular_vez':
+                for k,jogador in enumerate(self.jogadores):
+                    if jogador.id ==self.proximo_jogador.id:
+                        index = (k+1)%3
+                        self.proximo_jogador = self.jogadores[index]
+                        break
 
 
     def comprarCarta(self):
@@ -139,13 +150,13 @@ class Jogo:
 
     def passarVez(self):
         self.dict_jogada = {}
+        self.jogador_atual = self.proximo_jogador
         for k,jogador in enumerate(self.jogadores):
-            print(k)
-            if jogador.id ==self.jogador_atual.id:
+            if jogador.id ==self.proximo_jogador.id:
                 index = (k+1)%3
-                self.jogador_atual = self.proximo_jogador
                 self.proximo_jogador = self.jogadores[index]
-                print('proximo:', self.proximo_jogador.id)
+                break
+                
         self.dict_jogada['tipo'] = 'passar'
         self.dict_jogada['match_status'] = 'next'
 
