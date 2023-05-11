@@ -11,6 +11,7 @@ from Jogo import Jogo
 from Jogador import Jogador
 import json
 
+# teste
 class ActorInterface(DogPlayerInterface):
 
     def __init__(self,window: Window) -> None:
