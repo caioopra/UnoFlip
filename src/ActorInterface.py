@@ -177,7 +177,7 @@ class ActorInterface(DogPlayerInterface):
 
     def comprar(self) -> None:
         print(self.jogo.local_id)
-        if self.jogo.local_id == self.jogo.jogador_atual.id:
+        if (self.jogo.local_id == self.jogo.jogador_atual and not (self.jogo.comprou_carta or self.jogo.jogou_carta)):
             self.jogo.comprarCarta()
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
             self.atualizarInterface()
@@ -211,6 +211,8 @@ class ActorInterface(DogPlayerInterface):
             print('nao e sua vez')
 
     def jogarCarta(self,index) -> None:
+        print(index)
+        print(self.inicio_mao)
         if self.jogo.local_id == self.jogo.jogador_atual.id:           
    
             self.jogo.jogarCarta(self.inicio_mao+index)

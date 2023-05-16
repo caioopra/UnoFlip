@@ -116,6 +116,11 @@ class Jogo:
 
 
     def aplicarEfeito(self,index):
+        print()
+        print(len(self.jogador_atual.mao))
+        print(index)
+        print()
+
         carta = self.jogador_atual.mao[index]
         
         if (isinstance(carta.frente, FaceNumerica) or isinstance(carta.frente, FaceColoridaComPoder)):
