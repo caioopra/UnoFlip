@@ -52,11 +52,14 @@ class ActorInterface(DogPlayerInterface):
         
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
-            print('PASSOU')
 
-        print()
-        for jogadores in self.jogo.jogadores:
-            print(jogadores.id)
+
+        elif a_move['tipo'] == 'uno':
+            self.jogo.jogador_atual.gritar_uno()
+            self.jogo.verificar_UNO()
+            self.atualizarInterface()
+
+
 
     def receive_start(self, start_status) -> None:
         self.jogo.set_local_id(start_status.get_local_id())
@@ -71,7 +74,6 @@ class ActorInterface(DogPlayerInterface):
 
         if message == 'Partida iniciada':
             jogadores = start_status.get_players()
-            print(jogadores)
             id_jogador_local = start_status.get_local_id()
             self.jogo.set_local_id(id_jogador_local)
             self.jogo.criar_jogadores(jogadores)
@@ -106,7 +108,8 @@ class ActorInterface(DogPlayerInterface):
         self.setMenuCanvas() 
         self.createMenuDesign()
         self.window.resizable(False, False)
-        player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
+        # player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
+        player_name = 'joao'
         self.dog_server_interface = DogActor()
         message = self.dog_server_interface.initialize(player_name,self)
         messagebox.showinfo(message=message)
@@ -123,7 +126,7 @@ class ActorInterface(DogPlayerInterface):
 
         self.img0 = PhotoImage(file = f"table_images/ButtonUno.png")
         button_start = self.canvas.create_image(640, 80, image=self.img0)
-        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: print('Gritou uno'))
+        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.gritarUno())
 
 
         self.img1 = PhotoImage(file = f"table_images/Button(2).png")
@@ -172,12 +175,15 @@ class ActorInterface(DogPlayerInterface):
 
 
 
-
+    def gritarUno(self):
+        self.jogo.jogador_atual.gritar_uno()
+        self.jogo.verificar_UNO()
+        self.atualizarInterface()
+        self.dog_server_interface.send_move(self.jogo.dict_jogada)
 
 
     def comprar(self) -> None:
-        print(self.jogo.local_id)
-        if (self.jogo.local_id == self.jogo.jogador_atual and not (self.jogo.comprou_carta or self.jogo.jogou_carta)):
+        if (self.jogo.local_id == self.jogo.jogador_atual.id and not (self.jogo.comprou_carta or self.jogo.jogou_carta)):
             self.jogo.comprarCarta()
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
             self.atualizarInterface()
@@ -186,6 +192,8 @@ class ActorInterface(DogPlayerInterface):
 
 
 
+
+            
 
     def mover_mao(self,direcao: int) -> None:
         self.delete_local()
@@ -201,26 +209,24 @@ class ActorInterface(DogPlayerInterface):
         self.atualizarInterface()
 
     def passarVez(self):
-        print('atual',self.jogo.jogador_atual.id)
         if self.jogo.local_id == self.jogo.jogador_atual.id: 
             
             self.jogo.passarVez()
 
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
         else:
+            print(self.jogo.jogador_atual.id)
             print('nao e sua vez')
 
     def jogarCarta(self,index) -> None:
-        print(index)
-        print(self.inicio_mao)
+
+        
         if self.jogo.local_id == self.jogo.jogador_atual.id:           
    
-            self.jogo.jogarCarta(self.inicio_mao+index)
-            
-            self.dog_server_interface.send_move(self.jogo.dict_jogada)
-
-
-            self.atualizarInterface()
+            valida = self.jogo.jogarCarta(self.inicio_mao+index)
+            if valida:
+                self.dog_server_interface.send_move(self.jogo.dict_jogada)
+                self.atualizarInterface()
 
         else:
             print('nao e sua vez')
@@ -229,12 +235,12 @@ class ActorInterface(DogPlayerInterface):
         self.slots_local = []
 
         
-        func0 = lambda x:self.jogarCarta(0)
-        func1 = lambda x:self.jogarCarta(1)
-        func2 = lambda x:self.jogarCarta(2)
-        func3 = lambda x:self.jogarCarta(3)
-        func4 = lambda x:self.jogarCarta(4)
-        func5 = lambda x:self.jogarCarta(5)
+        func0 = lambda x: self.jogarCarta(0)
+        func1 = lambda x: self.jogarCarta(1)
+        func2 = lambda x: self.jogarCarta(2)
+        func3 = lambda x: self.jogarCarta(3)
+        func4 = lambda x: self.jogarCarta(4)
+        func5 = lambda x: self.jogarCarta(5)
         funcs = [func0,func1,func2,func3,func4,func5]
         
 
@@ -282,11 +288,10 @@ class ActorInterface(DogPlayerInterface):
 
 
     def delete_local(self) -> None:
-        for k,i in enumerate(self.slots_local):
+        for k, _ in enumerate(self.slots_local):
             self.canvas.delete(self.slots_local[k][0])
 
-
-
+    
 
 
     def start_table(self) -> None:
