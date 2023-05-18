@@ -7,20 +7,22 @@ class Jogador():
         self.nome = nome
         self.ordem = ordem
         self.mao = mao
+        self.gritou_uno = False
 
     def get_id(self) -> str:
         return self.id
 
-
     def get_nome(self) -> str:
         return self.nome
-
 
     def get_mao(self) -> list:
         return self.mao
 
     def adicionarCartaMao(self,carta):
         self.mao.insert(0,carta)
+
+    def gritar_uno(self):
+        self.gritou_uno = True
 
     def to_json(self) -> dict:
         a =  json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

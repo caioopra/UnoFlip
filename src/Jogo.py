@@ -65,14 +65,16 @@ class Jogo:
 
 
     def jogarCarta(self,index):
-
+        valida = False
         if not self.comprou_carta and not self.jogou_carta:
 
-            self.tentarColocarCartaNaMesa(index)
+            valida = self.tentarColocarCartaNaMesa(index)
                     
 
         else:
             print('voce ja atuou nesse turno')
+
+        return valida
             
 
     def tentarColocarCartaNaMesa(self,index):
@@ -84,14 +86,16 @@ class Jogo:
             self.dict_jogada['index'] = index
             self.dict_jogada['match_status'] = 'progress'
             self.mesa.setUltimaCarta(self.jogador_atual.mao[index])
-            del self.jogador_atual.mao[index]
             self.aplicarEfeito(index)
+            del self.jogador_atual.mao[index]
             self.jogou_carta = True
 
 
 
         else:
             print('nao pode jogar essa carta')
+        
+        return valida
 
 
 
@@ -114,12 +118,28 @@ class Jogo:
         else:
             return False
 
+    def verificar_UNO(self):
+        self.dict_jogada = {}
+        achou_denunciavel = False
+
+        for jogador in self.jogadores:
+            mao = jogador.get_mao()
+            gritou = jogador.gritou_uno
+            if len(mao) == 1 and gritou == False:
+                self.darCarta(jogador, 2)
+                achou_denunciavel = True
+
+        # verificacao para o jogador atual
+        tamanho = len(self.jogador_atual.get_mao())
+        if not achou_denunciavel and tamanho > 1:
+            self.darCarta(self.jogador_atual, 2)
+        
+        self.dict_jogada['tipo'] = 'uno'
+        self.dict_jogada['match_status'] = 'progress'
+
+
 
     def aplicarEfeito(self,index):
-        print()
-        print(len(self.jogador_atual.mao))
-        print(index)
-        print()
 
         carta = self.jogador_atual.mao[index]
         
@@ -160,7 +180,11 @@ class Jogo:
             if jogador.id ==self.proximo_jogador.id:
                 index = (k+1)%3
                 self.proximo_jogador = self.jogadores[index]
+                for jogador in self.jogadores: print("jogador: ", jogador.id)
+                print(self.proximo_jogador.id)
+                print(index)
                 break
+
                 
         self.dict_jogada['tipo'] = 'passar'
         self.dict_jogada['match_status'] = 'next'
