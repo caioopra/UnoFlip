@@ -248,7 +248,7 @@ class ActorInterface(DogPlayerInterface):
             if (i+self.inicio_mao) < len(self.jogo.jogadores[self.hand_local].get_mao()):
                 self.slots_local.append(self.jogo.jogadores[self.hand_local].get_mao()[i+self.inicio_mao])
             if i < len(self.slots_local):
-                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].get_face_atual().get_id()])
+                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].get_frente().get_id()])
                 self.slots_local[i] = (button_card,self.slots_local[i])
                 self.canvas.tag_bind(button_card, "<Button-1>", funcs[i])
             
@@ -262,6 +262,9 @@ class ActorInterface(DogPlayerInterface):
             if i <len(self.slots_remote_right):
                 identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].get_verso().get_id()}_270'])
                 self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
+
+
+                
 
     def addRemoteCardLeft(self) -> None:
         self.slots_remote_left = []
@@ -284,7 +287,7 @@ class ActorInterface(DogPlayerInterface):
 
         carta = self.jogo.mesa.getUltimaCarta()
 
-        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[carta.get_face_atual().get_id()])
+        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[carta.get_frente().get_id()])
 
 
     def delete_local(self) -> None:

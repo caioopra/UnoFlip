@@ -103,15 +103,15 @@ class Jogo:
 
         carta = self.jogador_atual.mao[index]
 
-        if isinstance(carta.face_atual,FaceCoringa):
+        if isinstance(carta.frente,FaceCoringa):
 
             return True
 
-        elif self.mesa.ultima_carta.face_atual.cor == carta.face_atual.cor:
+        elif self.mesa.ultima_carta.frente.cor == carta.frente.cor:
 
             return True
 
-        elif self.mesa.ultima_carta.face_atual.get_simbolo() == carta.face_atual.get_simbolo():
+        elif self.mesa.ultima_carta.frente.get_simbolo() == carta.frente.get_simbolo():
 
             return True 
         
@@ -153,6 +153,20 @@ class Jogo:
                         index = (k+1)%3
                         self.proximo_jogador = self.jogadores[index]
                         break
+            elif efeito == 'girar':
+                for carta in self.mesa.baralho.cartas:
+                    carta.flip()
+                for jogador in self.jogadores:
+                    for carta in jogador.mao:
+                        carta.flip()
+                self.mesa.ultima_carta.flip()
+            elif efeito == 'mais_cinco':
+                pass
+            elif efeito == 'pular_todos':
+                pass
+            elif efeito == 'inverter_ordem':
+                pass
+
 
 
     def comprarCarta(self):
