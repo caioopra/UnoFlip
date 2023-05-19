@@ -19,6 +19,9 @@ class Jogo:
         self.jogou_carta = False
         self.comprou_carta = False
         self.gritou_uno = False
+        self.left_position = 0
+        self.local_position = 0
+        self.right_position = 0
         self.dict_jogada = {}
         self.mesa = Mesa(Baralho())
 
@@ -170,6 +173,11 @@ class Jogo:
                         break
             elif efeito == 'inverter_ordem':
                 self.jogadores = self.jogadores[::-1]
+                a = [self.left_position,self.local_position,self.right_position]
+                a = a[::-1]
+                self.left_position = a[0]
+                self.local_position = a[1]
+                self.right_position = a[2]
 
 
 
