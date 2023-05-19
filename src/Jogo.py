@@ -161,11 +161,15 @@ class Jogo:
                         carta.flip()
                 self.mesa.ultima_carta.flip()
             elif efeito == 'mais_cinco':
-                pass
+                self.darCarta(self.proximo_jogador,5)
             elif efeito == 'pular_todos':
-                pass
+                for k,jogador in enumerate(self.jogadores):
+                    if jogador.id ==self.proximo_jogador.id:
+                        index = (k+2)%3
+                        self.proximo_jogador = self.jogadores[index]
+                        break
             elif efeito == 'inverter_ordem':
-                pass
+                self.jogadores = self.jogadores[::-1]
 
 
 
