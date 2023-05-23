@@ -10,6 +10,7 @@ from Baralho import Baralho
 from Jogo import Jogo
 from Jogador import Jogador
 import json
+from time import sleep
 
 # teste
 class ActorInterface(DogPlayerInterface):
@@ -87,7 +88,7 @@ class ActorInterface(DogPlayerInterface):
             self.start_table()
             
 
-    def setMenuCanvas(self) -> None:
+    def setCanvas(self) -> None:
         self.canvas = Canvas(
             self.window,bg = "#ffffff",height = 720,width = 1280,bd = 0,highlightthickness = 0,relief = "ridge")
         self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
@@ -102,7 +103,7 @@ class ActorInterface(DogPlayerInterface):
 
 
     def startMenu(self) -> None:
-        self.setMenuCanvas() 
+        self.setCanvas() 
         self.createMenuDesign()
         self.window.resizable(False, False)
         # player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
@@ -111,10 +112,6 @@ class ActorInterface(DogPlayerInterface):
         message = self.dog_server_interface.initialize(player_name,self)
         messagebox.showinfo(message=message)
         self.window.mainloop()
-
-    def setTableCanvas(self) -> None:
-        self.canvas = Canvas(self.window,bg = "#ffffff",height = 720,width = 1280,bd = 0,highlightthickness = 0,relief = "ridge")
-        self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 
     def createTableDesign(self) -> None:
@@ -224,7 +221,10 @@ class ActorInterface(DogPlayerInterface):
             if valida:
                 self.dog_server_interface.send_move(self.jogo.dict_jogada)
                 self.atualizarInterface()
-
+            
+            if not self.jogo.jogador_atual.mao:
+                sleep(0.2)
+                self.mostrarEndGame()
         else:
             print('nao e sua vez')
 
@@ -293,10 +293,20 @@ class ActorInterface(DogPlayerInterface):
 
     
 
+    def mostrarEndGame(self):
+        indice_jogador = self.jogo.local_position
+        self.setCanvas()
+        if len(self.jogo.jogadores[indice_jogador].mao):
+            imagem = 'perdeu'
+        else:
+            imagem = 'venceu'
+        self.background_img = PhotoImage(file = f"menu_images/{imagem}.png")
+        background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
+    
 
     def start_table(self) -> None:
 
-        self.setTableCanvas()
+        self.setCanvas()
         self.createTableDesign()
 
         self.atualizarInterface()
