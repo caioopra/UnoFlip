@@ -47,6 +47,9 @@ class ActorInterface(DogPlayerInterface):
             index = a_move['index']
             self.jogo.jogarCarta(index)
             self.atualizarInterface()
+            if not self.jogo.jogador_atual.mao:
+                sleep(0.2)
+                self.mostrarEndGame()
         
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
