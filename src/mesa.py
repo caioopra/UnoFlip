@@ -5,8 +5,8 @@ class Mesa:
 
     def __init__(self,baralho) -> None:
         self.baralho = baralho
-        self.ultima_carta = self.baralho.cartas.pop()
-        # self.setCartaInicial()
+        # self.ultima_carta = self.baralho.cartas.pop()
+        self.setCartaInicial()
 
     def getUltimaCarta(self):
         return self.ultima_carta
