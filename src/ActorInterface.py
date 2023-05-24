@@ -5,11 +5,9 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from dog.dog_interface import DogPlayerInterface
 from dog.dog_actor import DogActor
-from random import randint
-from Baralho import Baralho
+from FaceCoringa import FaceCoringa
 from Jogo import Jogo
-from Jogador import Jogador
-import json
+
 from time import sleep
 
 # teste
@@ -53,8 +51,21 @@ class ActorInterface(DogPlayerInterface):
         
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
+        
+        elif a_move['tipo'] == 'muda_cor':
+            self.mudaCor(a_move['cor'])
 
+            carta = self.jogo.mesa.getUltimaCarta()
+            if carta.frente.simbolo == 'compra_ate_vir':
+                self.jogo.darCarta(self.jogo.proximo_jogador,1)
+                carta_comprada = self.jogo.proximo_jogador.mao[0]
+                if not isinstance(carta_comprada.frente, FaceCoringa):
+                    while carta_comprada.frente.cor != a_move['cor']:
+                        if not isinstance(carta_comprada.frente, FaceCoringa):
+                            self.jogo.darCarta(self.jogo.proximo_jogador,1)
+                            carta_comprada = self.jogo.proximo_jogador.mao[0]
 
+            self.atualizarInterface()
         elif a_move['tipo'] == 'uno':
             self.jogo.jogador_atual.gritar_uno()
             self.jogo.verificar_UNO()
@@ -187,9 +198,6 @@ class ActorInterface(DogPlayerInterface):
         else:
             print('nao e sua vez')
 
-
-
-
             
 
     def mover_mao(self,direcao: int) -> None:
@@ -224,6 +232,8 @@ class ActorInterface(DogPlayerInterface):
             if valida:
                 self.dog_server_interface.send_move(self.jogo.dict_jogada)
                 self.atualizarInterface()
+                if self.jogo.mesa.getUltimaCarta().frente.tipo == 'coringa':
+                    self.escolherCor()
             
             if not self.jogo.jogador_atual.mao:
                 sleep(0.2)
@@ -264,7 +274,6 @@ class ActorInterface(DogPlayerInterface):
                 self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
 
 
-                
 
     def addRemoteCardLeft(self) -> None:
         self.slots_remote_left = []
@@ -307,13 +316,106 @@ class ActorInterface(DogPlayerInterface):
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
     
 
-    def start_table(self) -> None:
+    def escolherCor(self):
+        carta = self.jogo.mesa.getUltimaCarta()
+        cor = carta.frente.id[0]
+        
+        if cor == "l":
+            retangulo = 'Rectangle_light'
+            quadrado1 = 'vermelho'
+            quadrado2 = 'azul'
+            quadrado3 = 'amarelo'
+            quadrado4 = 'verde'
+        else:
+            retangulo = 'Rectangle_dark'
+            quadrado1 = 'ciano'
+            quadrado2 = 'laranja'
+            quadrado3 = 'rosa'
+            quadrado4 = 'roxo'        
+            
 
-        self.setCanvas()
-        self.createTableDesign()
+        self.rectangle = PhotoImage(file = f"table_images/{retangulo}.png")
+        self.rectangle_id = self.canvas.create_image(640, 360, image=self.rectangle)
+    
+        
+        self.vermelho = PhotoImage(file = f"table_images/{quadrado1}.png")
+        self.button1_id = self.canvas.create_image(745, 255, image=self.vermelho)
+        self.canvas.tag_bind(self.button1_id, "<Button-1>", lambda x:  self.mudaCor(quadrado1))
+
+
+        self.azul = PhotoImage(file = f"table_images/{quadrado2}.png")
+        self.button2_id = self.canvas.create_image(535, 255, image=self.azul)
+        self.canvas.tag_bind(self.button2_id, "<Button-1>", lambda x: self.mudaCor(quadrado2))
+
+
+        self.amarelo = PhotoImage(file = f"table_images/{quadrado3}.png")
+        self.button3_id = self.canvas.create_image(745, 465, image=self.amarelo)
+        self.canvas.tag_bind(self.button3_id, "<Button-1>", lambda x: self.mudaCor(quadrado3))
+
+
+        self.verde = PhotoImage(file = f"table_images/{quadrado4}.png")
+        self.button4_id = self.canvas.create_image(535, 465, image=self.verde)
+        self.canvas.tag_bind(self.button4_id, "<Button-1>", lambda x: self.mudaCor(quadrado4))
+
+    def mudaCor(self, cor: str):
+        carta = self.jogo.mesa.getUltimaCarta()
+ 
+        cores_mais_dois = {
+            'amarelo': 'light_7',
+            'vermelho': 'light_8',
+            'azul': 'light_9',
+            'verde': 'light_10'
+        }
+        cores_compra_ate_vir= {
+            'laranja': 'dark_7',
+            'rosa': 'dark_8',
+            'roxo': 'dark_9',
+            'ciano': 'dark_10'
+        }
+
+        cores_coringa = {
+            'amarelo': 'light_2',
+            'vermelho': 'light_3',
+            'azul': 'light_4',
+            'verde': 'light_5',
+            'laranja': 'dark_2',
+            'rosa': 'dark_3',
+            'roxo': 'dark_4',
+            'ciano': 'dark_5'
+        }
+
+        if carta.frente.simbolo == 'mais_dois':
+            carta.frente.id = cores_mais_dois[cor]
+            self.jogo.mesa.setUltimaCarta(carta)
+        elif carta.frente.simbolo == 'compra_ate_vir':
+            carta.frente.id = cores_compra_ate_vir[cor]
+            self.jogo.mesa.setUltimaCarta(carta)
+        elif carta.frente.simbolo ==  'coringa':
+            carta.frente.id = cores_coringa[cor]
+            self.jogo.mesa.setUltimaCarta(carta)
 
         self.atualizarInterface()
 
+        if self.jogo.jogador_atual is self.jogo.jogadores[self.jogo.local_position]:
+            sleep(0.2)
+
+            a = self.rectangle_id
+            for i in range(a,a+5):
+                self.canvas.delete(i)
+
+            dict_a = {
+                'match_status': 'progress',
+                'tipo': 'muda_cor',
+                'cor': cor
+            }
+
+            self.dog_server_interface.send_move(dict_a)
+
+
+    def start_table(self) -> None:
+        self.setCanvas()
+        self.createTableDesign()
+        self.atualizarInterface()
 
 
     def atualizarInterface(self):
@@ -324,7 +426,6 @@ class ActorInterface(DogPlayerInterface):
         self.addCard()
 
         self.addRemoteCardRight()
-        
         self.addRemoteCardLeft()
 
 

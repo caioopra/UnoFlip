@@ -6,7 +6,6 @@ class Carta():
         self.frente = frente
         self.verso = verso
 
-
     def get_frente(self) -> Face:
         return self.frente
 

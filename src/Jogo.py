@@ -5,8 +5,7 @@ from FaceColoridaComPoder import FaceColoridaComPoder
 from FaceCoringa import FaceCoringa
 from Jogador import Jogador
 from mesa import Mesa
-import json
-from types import SimpleNamespace
+from time import sleep
 
 class Jogo:
 
@@ -92,9 +91,6 @@ class Jogo:
             self.aplicarEfeito(index)
             del self.jogador_atual.mao[index]
             self.jogou_carta = True
-
-
-
         else:
             print('nao pode jogar essa carta')
         
@@ -178,6 +174,10 @@ class Jogo:
                 self.left_position = a[0]
                 self.local_position = a[1]
                 self.right_position = a[2]
+            elif efeito == 'compra_ate_vir':
+                pass
+            elif efeito == 'mais_dois':
+                self.darCarta(self.proximo_jogador,2)
 
 
 
@@ -190,10 +190,11 @@ class Jogo:
 
             self.dict_jogada['tipo'] = 'comprar'
             self.dict_jogada['match_status'] = 'progress'
+            
 
-            # carta = self.jogador_atual.mao[0]
+            carta = self.jogador_atual.mao[0]
 
-            # self.tentarColocarCartaNaMesa(carta)
+            self.tentarColocarCartaNaMesa(carta)
 
         else:
             print('ja atuou')
@@ -246,11 +247,16 @@ class Jogo:
                 frente = FaceNumerica(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             elif frente['tipo'] == 'colorida_poder':
                 frente = FaceColoridaComPoder(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+            elif frente['tipo'] == 'coringa':
+                frente = FaceCoringa(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             if verso['tipo'] == 'numerica':
                 verso = FaceNumerica(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             elif verso['tipo'] == 'colorida_poder':
                 verso = FaceColoridaComPoder(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+            elif verso['tipo'] == 'coringa':
+                verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             baralho_list.append(Carta(frente,verso))
+
 
         self.mesa.baralho.cartas = baralho_list
         
@@ -262,10 +268,14 @@ class Jogo:
             frente = FaceNumerica(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
         elif frente['tipo'] == 'colorida_poder':
             frente = FaceColoridaComPoder(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+        elif frente['tipo'] == 'coringa':
+            frente = FaceCoringa(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
         if verso['tipo'] == 'numerica':
             verso = FaceNumerica(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
         elif verso['tipo'] == 'colorida_poder':
             verso = FaceColoridaComPoder(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+        elif verso['tipo'] == 'coringa':
+            verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
         
         carta_mesa = Carta(frente,verso)        
         
@@ -285,10 +295,14 @@ class Jogo:
                 frente = FaceNumerica(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             elif frente['tipo'] == 'colorida_poder':
                 frente = FaceColoridaComPoder(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+            elif frente['tipo'] == 'coringa':
+                frente = FaceCoringa(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             if verso['tipo'] == 'numerica':
                 verso = FaceNumerica(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             elif verso['tipo'] == 'colorida_poder':
                 verso = FaceColoridaComPoder(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+            elif verso['tipo'] == 'coringa':
+                verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             mao_list.append(Carta(frente,verso))
 
         self.jogadores[0] = Jogador(id_jogador,nome,ordem,mao_list)
@@ -307,10 +321,14 @@ class Jogo:
                 frente = FaceNumerica(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             elif frente['tipo'] == 'colorida_poder':
                 frente = FaceColoridaComPoder(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+            elif frente['tipo'] == 'coringa':
+                frente = FaceCoringa(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             if verso['tipo'] == 'numerica':
                 verso = FaceNumerica(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             elif verso['tipo'] == 'colorida_poder':
                 verso = FaceColoridaComPoder(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+            elif verso['tipo'] == 'coringa':
+                verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             mao_list.append(Carta(frente,verso))
 
         self.jogadores[1] = Jogador(id_jogador,nome,ordem,mao_list)
@@ -331,10 +349,14 @@ class Jogo:
                 frente = FaceNumerica(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             elif frente['tipo'] == 'colorida_poder':
                 frente = FaceColoridaComPoder(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
+            elif frente['tipo'] == 'coringa':
+                frente = FaceCoringa(frente['id'],frente['cor'],frente['simbolo'],frente['tipo'])
             if verso['tipo'] == 'numerica':
                 verso = FaceNumerica(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             elif verso['tipo'] == 'colorida_poder':
                 verso = FaceColoridaComPoder(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
+            elif verso['tipo'] == 'coringa':
+                verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             mao_list.append(Carta(frente,verso))
 
         self.jogadores[2] = Jogador(id_jogador,nome,ordem,mao_list)
