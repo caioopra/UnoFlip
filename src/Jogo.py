@@ -92,7 +92,6 @@ class Jogo:
 
 
     def verificarValida(self,index):
-        print("index: ", index)
         carta = self.jogador_atual.mao[index]
 
         if isinstance(carta.frente,FaceCoringa):
@@ -151,9 +150,7 @@ class Jogo:
                 for jogador in self.jogadores:
                     for carta in jogador.mao:
                         carta.flip()
-                print("Frente ultima carta: ", self.mesa.ultima_carta.frente.id)
                 # self.mesa.ultima_carta.flip()
-                print("Depois de flipar: ", self.mesa.ultima_carta.frente.id)
             elif efeito == 'mais_cinco':
                 self.darCarta(self.proximo_jogador,5)
             elif efeito == 'pular_todos':
