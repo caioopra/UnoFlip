@@ -151,7 +151,9 @@ class Jogo:
                 for jogador in self.jogadores:
                     for carta in jogador.mao:
                         carta.flip()
-                self.mesa.ultima_carta.flip()
+                print("Frente ultima carta: ", self.mesa.ultima_carta.frente.id)
+                # self.mesa.ultima_carta.flip()
+                print("Depois de flipar: ", self.mesa.ultima_carta.frente.id)
             elif efeito == 'mais_cinco':
                 self.darCarta(self.proximo_jogador,5)
             elif efeito == 'pular_todos':
