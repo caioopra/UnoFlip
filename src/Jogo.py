@@ -21,7 +21,6 @@ class Jogo:
         self.dict_jogada = {}
         self.mesa = Mesa(Baralho())
 
-
     def get_jogadores(self) -> list:
         return self.jogadores
 
@@ -51,22 +50,22 @@ class Jogo:
 
     def dar_cartas_iniciais(self) -> list:
         mao = []
-        for _ in range(8):
+        for _ in range(2):
             carta = self.mesa.baralho.cartas.pop()
             mao.append(carta)
         return mao
 
     def darCarta(self,jogador,quantidade):
-        for _ in range(quantidade):
-            carta = self.mesa.baralho.comprar_carta()
-            jogador.adicionarCartaMao(carta)
-            jogador.gritou_uno = False
+        jogador.receberCartas(quantidade, self.mesa.baralho)
 
+        if self.jogador_atual.denunciavel:
+            self.jogador_atual.denunciavel = False
 
     def jogarCarta(self,index):
         valida = False
         if not self.jogador_atual.comprou_carta and not self.jogador_atual.jogou_carta:
             valida = self.tentarColocarCartaNaMesa(index)
+            self.jogador_atual.verificarDenunciavel()
         else:
             print('voce ja atuou nesse turno')
 
@@ -114,14 +113,12 @@ class Jogo:
         achou_denunciavel = False
 
         for jogador in self.jogadores:
-            mao = jogador.get_mao()
-            gritou = jogador.gritou_uno
-            if len(mao) == 1 and gritou == False:
+            if jogador.denunciavel:
                 self.darCarta(jogador, 2)
                 achou_denunciavel = True
 
         # verificacao para o jogador atual
-        tamanho = len(self.jogador_atual.get_mao())
+        tamanho = len(self.jogador_atual.mao)
         if not achou_denunciavel and tamanho > 1:
             self.darCarta(self.jogador_atual, 2)
         
@@ -172,17 +169,17 @@ class Jogo:
                 self.darCarta(self.proximo_jogador,2)
 
 
-
     def comprarCarta(self):
-        
+        print("tentando comprar")
         if not (self.jogador_atual.comprou_carta or self.jogador_atual.jogou_carta):
-            self.darCarta(self.jogador_atual,1)
+            self.jogador_atual.comprarCarta(self.mesa.baralho)
 
-            self.jogador_atual.comprou_carta = True
+            if self.jogador_atual.denunciavel:
+                self.jogador_atual.denunciavel = False
 
             self.dict_jogada['tipo'] = 'comprar'
             self.dict_jogada['match_status'] = 'progress'
-
+            print(self.dict_jogada, self.dict_jogada['match_status'])
         else:
             print('ja atuou')
 

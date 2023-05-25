@@ -23,7 +23,7 @@ class ActorInterface(DogPlayerInterface):
         self.jogo = Jogo()
         self.loadCardImages()
         self.startMenu()
-        
+
     def receive_move(self, a_move: dict) -> None:
         if a_move['tipo'] == 'init':
             print("comecou")
@@ -57,12 +57,13 @@ class ActorInterface(DogPlayerInterface):
 
             carta = self.jogo.mesa.getUltimaCarta()
             if carta.frente.simbolo == 'compra_ate_vir':
-                self.jogo.darCarta(self.jogo.proximo_jogador,1)
+                self.jogo.proximo_jogador.receberCartas(1, self.jogo.mesa.baralho)
                 carta_comprada = self.jogo.proximo_jogador.mao[0]
+
                 if not isinstance(carta_comprada.frente, FaceCoringa):
                     while carta_comprada.frente.cor != a_move['cor']:
                         if not isinstance(carta_comprada.frente, FaceCoringa):
-                            self.jogo.darCarta(self.jogo.proximo_jogador,1)
+                            self.jogo.proximo_jogador.receberCartas(1, self.jogo.mesa.baralho)
                             carta_comprada = self.jogo.proximo_jogador.mao[0]
 
             self.atualizarInterface()
@@ -70,8 +71,6 @@ class ActorInterface(DogPlayerInterface):
             self.jogo.jogador_atual.gritar_uno()
             self.jogo.verificar_UNO()
             self.atualizarInterface()
-
-
 
     def receive_start(self, start_status) -> None:
         self.jogo.set_local_id(start_status.get_local_id())
@@ -182,7 +181,6 @@ class ActorInterface(DogPlayerInterface):
             self.dict_of_cards[f"dark_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
 
 
-
     def gritarUno(self):
         self.jogo.jogador_atual.gritar_uno()
         self.jogo.verificar_UNO()
@@ -206,7 +204,7 @@ class ActorInterface(DogPlayerInterface):
         self.delete_local()
         
         if direcao ==1:
-            if self.inicio_mao+6<len(self.jogo.jogadores[self.jogo.local_position].get_mao()):
+            if self.inicio_mao+6<len(self.jogo.jogadores[self.jogo.local_position].mao):
                 self.inicio_mao +=1
 
         if direcao ==0:
@@ -255,8 +253,8 @@ class ActorInterface(DogPlayerInterface):
         
 
         for i in range(6):
-            if (i+self.inicio_mao) < len(self.jogo.jogadores[self.jogo.local_position].get_mao()):
-                self.slots_local.append(self.jogo.jogadores[self.jogo.local_position].get_mao()[i+self.inicio_mao])
+            if (i+self.inicio_mao) < len(self.jogo.jogadores[self.jogo.local_position].mao):
+                self.slots_local.append(self.jogo.jogadores[self.jogo.local_position].mao[i+self.inicio_mao])
             if i < len(self.slots_local):
                 button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].get_frente().get_id()])
                 self.slots_local[i] = (button_card,self.slots_local[i])
@@ -266,8 +264,8 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_right = []
 
         for i in range(5):
-            if i < len(self.jogo.jogadores[self.jogo.right_position].get_mao()):
-                self.slots_remote_right.append(self.jogo.jogadores[self.jogo.right_position].get_mao()[i])
+            if i < len(self.jogo.jogadores[self.jogo.right_position].mao):
+                self.slots_remote_right.append(self.jogo.jogadores[self.jogo.right_position].mao[i])
 
             if i <len(self.slots_remote_right):
                 identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].get_verso().get_id()}_270'])
@@ -279,8 +277,8 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_left = []
 
         for i in range(5):
-            if i < len(self.jogo.jogadores[self.jogo.left_position].get_mao()):
-                self.slots_remote_left.append(self.jogo.jogadores[self.jogo.left_position].get_mao()[i])
+            if i < len(self.jogo.jogadores[self.jogo.left_position].mao):
+                self.slots_remote_left.append(self.jogo.jogadores[self.jogo.left_position].mao[i])
 
             if i <len(self.slots_remote_left):
                 identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].get_verso().get_id()}_90'])

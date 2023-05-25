@@ -77,15 +77,11 @@ class Baralho():
     def embaralhar(self) -> None:
         shuffle(self.cartas)
 
-
-    def comprar_carta(self) -> None:
-        carta = self.cartas.pop(0)
-        return carta
-
     def to_json(self) -> dict:
         a =  json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
         json_acceptable_string = a.replace("'", "\"")
         json_ = json.loads(json_acceptable_string)
         return json_
 
-
+    def darCarta(self):
+        return self.cartas.pop(0)
