@@ -9,3 +9,7 @@ class FaceCoringa(Face):
 
     def get_poder(self) -> str:
         return self.poder
+    
+    def get_simbolo(self) -> str:
+        return self.simbolo
+    

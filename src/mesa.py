@@ -2,7 +2,6 @@ from random import randint
 
 
 class Mesa:
-
     def __init__(self,baralho) -> None:
         self.baralho = baralho
         # self.ultima_carta = self.baralho.cartas.pop()

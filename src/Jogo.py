@@ -15,9 +15,6 @@ class Jogo:
         self.status = 0
         self.jogador_atual = None
         self.proximo_jogador = None
-        self.jogou_carta = False
-        self.comprou_carta = False
-        self.gritou_uno = False
         self.left_position = 0
         self.local_position = 0
         self.right_position = 0
@@ -68,16 +65,12 @@ class Jogo:
 
     def jogarCarta(self,index):
         valida = False
-        if not self.comprou_carta and not self.jogou_carta:
-
+        if not self.jogador_atual.comprou_carta and not self.jogador_atual.jogou_carta:
             valida = self.tentarColocarCartaNaMesa(index)
-                    
-
         else:
             print('voce ja atuou nesse turno')
 
         return valida
-            
 
     def tentarColocarCartaNaMesa(self,index):
         valida =self.verificarValida(index)
@@ -90,7 +83,7 @@ class Jogo:
             self.mesa.setUltimaCarta(self.jogador_atual.mao[index])
             self.aplicarEfeito(index)
             del self.jogador_atual.mao[index]
-            self.jogou_carta = True
+            self.jogador_atual.jogou_carta = True
         else:
             print('nao pode jogar essa carta')
         
@@ -99,7 +92,7 @@ class Jogo:
 
 
     def verificarValida(self,index):
-
+        print("index: ", index)
         carta = self.jogador_atual.mao[index]
 
         if isinstance(carta.frente,FaceCoringa):
@@ -183,18 +176,13 @@ class Jogo:
 
     def comprarCarta(self):
         
-        if not (self.comprou_carta or self.jogou_carta):
+        if not (self.jogador_atual.comprou_carta or self.jogador_atual.jogou_carta):
             self.darCarta(self.jogador_atual,1)
 
-            self.comprou_carta = True
+            self.jogador_atual.comprou_carta = True
 
             self.dict_jogada['tipo'] = 'comprar'
             self.dict_jogada['match_status'] = 'progress'
-            
-
-            carta = self.jogador_atual.mao[0]
-
-            self.tentarColocarCartaNaMesa(carta)
 
         else:
             print('ja atuou')
@@ -202,7 +190,11 @@ class Jogo:
 
     def passarVez(self):
         self.dict_jogada = {}
+
+        self.jogador_atual.jogou_carta = False
+        self.jogador_atual.comprou_carta = False
         self.jogador_atual = self.proximo_jogador
+        
         for k,jogador in enumerate(self.jogadores):
             if jogador.id ==self.proximo_jogador.id:
                 index = (k+1)%3
@@ -212,12 +204,8 @@ class Jogo:
                 print(index)
                 break
 
-                
         self.dict_jogada['tipo'] = 'passar'
         self.dict_jogada['match_status'] = 'next'
-
-        self.jogou_carta = False
-        self.comprou_carta = False
 
     def transform_play_to_dict(self, tipo_jogada) -> dict:
         

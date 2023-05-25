@@ -19,7 +19,6 @@ class ActorInterface(DogPlayerInterface):
         self.slots_local = []
         self.slots_remote_right = []
         self.slots_remote_left = []
-        self.list_of_cards_in_cheap = []
         self.inicio_mao = 0
         self.jogo = Jogo()
         self.loadCardImages()
@@ -27,6 +26,7 @@ class ActorInterface(DogPlayerInterface):
         
     def receive_move(self, a_move: dict) -> None:
         if a_move['tipo'] == 'init':
+            print("comecou")
             self.jogo.transform_dict_to_object(a_move)
             jogadores = self.jogo.get_jogadores()
             for k,jogador in enumerate(jogadores):
@@ -191,7 +191,9 @@ class ActorInterface(DogPlayerInterface):
 
 
     def comprar(self) -> None:
-        if (self.jogo.local_id == self.jogo.jogador_atual.id and not (self.jogo.comprou_carta or self.jogo.jogou_carta)):
+        if (self.jogo.local_id == self.jogo.jogador_atual.id and 
+            not (self.jogo.jogador_atual.comprou_carta or self.jogo.jogador_atual.jogou_carta)
+        ):
             self.jogo.comprarCarta()
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
             self.atualizarInterface()
@@ -224,8 +226,6 @@ class ActorInterface(DogPlayerInterface):
             print('nao e sua vez')
 
     def jogarCarta(self,index) -> None:
-
-        
         if self.jogo.local_id == self.jogo.jogador_atual.id:           
    
             valida = self.jogo.jogarCarta(self.inicio_mao+index)
@@ -290,9 +290,9 @@ class ActorInterface(DogPlayerInterface):
 
     def addCheap(self):
         try:
-                self.canvas.delete(self.button_cheap)
+            self.canvas.delete(self.button_cheap)
         except:
-                pass
+            pass
 
         carta = self.jogo.mesa.getUltimaCarta()
 
@@ -359,6 +359,7 @@ class ActorInterface(DogPlayerInterface):
 
     def mudaCor(self, cor: str):
         carta = self.jogo.mesa.getUltimaCarta()
+        carta.frente.cor = cor
  
         cores_mais_dois = {
             'amarelo': 'light_7',
@@ -396,7 +397,7 @@ class ActorInterface(DogPlayerInterface):
 
         self.atualizarInterface()
 
-        if self.jogo.jogador_atual is self.jogo.jogadores[self.jogo.local_position]:
+        if self.jogo.jogador_atual.id == self.jogo.jogadores[self.jogo.local_position].id:
             sleep(0.2)
 
             a = self.rectangle_id

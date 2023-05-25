@@ -7,7 +7,10 @@ class Jogador():
         self.nome = nome
         self.ordem = ordem
         self.mao = mao
+        
         self.gritou_uno = False
+        self.jogou_carta = False
+        self.comprou_carta = False
 
     def get_id(self) -> str:
         return self.id
