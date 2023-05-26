@@ -58,12 +58,12 @@ class Jogo:
     def darCarta(self,jogador,quantidade):
         jogador.receberCartas(quantidade, self.mesa.baralho)
 
-        if self.jogador_atual.denunciavel:
-            self.jogador_atual.denunciavel = False
+        if self.jogador_atual.get_denunciavel():
+            self.jogador_atual.set_denunciavel(False)
 
     def jogarCarta(self,index):
         valida = False
-        if not self.jogador_atual.comprou_carta and not self.jogador_atual.jogou_carta:
+        if not self.jogador_atual.get_comprou_carta() and not self.jogador_atual.get_jogou_carta():
             valida = self.tentarColocarCartaNaMesa(index)
             self.jogador_atual.verificarDenunciavel()
         else:
@@ -79,10 +79,10 @@ class Jogo:
             self.dict_jogada['tipo'] = 'jogar'
             self.dict_jogada['index'] = index
             self.dict_jogada['match_status'] = 'progress'
-            self.mesa.setUltimaCarta(self.jogador_atual.mao[index])
+            self.mesa.setUltimaCarta(self.jogador_atual.get_mao()[index])
             self.aplicarEfeito(index)
-            del self.jogador_atual.mao[index]
-            self.jogador_atual.jogou_carta = True
+            del self.jogador_atual.get_mao()[index]
+            self.jogador_atual.set_jogou_carta(True)
         else:
             print('nao pode jogar essa carta')
         
@@ -91,7 +91,7 @@ class Jogo:
 
 
     def verificarValida(self,index):
-        carta = self.jogador_atual.mao[index]
+        carta = self.jogador_atual.get_mao()[index]
 
         if isinstance(carta.frente,FaceCoringa):
 
@@ -113,12 +113,12 @@ class Jogo:
         achou_denunciavel = False
 
         for jogador in self.jogadores:
-            if jogador.denunciavel:
+            if jogador.get_denunciavel():
                 self.darCarta(jogador, 2)
                 achou_denunciavel = True
 
         # verificacao para o jogador atual
-        tamanho = len(self.jogador_atual.mao)
+        tamanho = len(self.jogador_atual.get_mao())
         if not achou_denunciavel and tamanho > 1:
             self.darCarta(self.jogador_atual, 2)
         
@@ -129,7 +129,7 @@ class Jogo:
 
     def aplicarEfeito(self,index):
 
-        carta = self.jogador_atual.mao[index]
+        carta = self.jogador_atual.get_mao()[index]
         
         if (isinstance(carta.frente, FaceNumerica) or isinstance(carta.frente, FaceColoridaComPoder)):
             efeito = carta.frente.simbolo
@@ -137,7 +137,7 @@ class Jogo:
                 self.darCarta(self.proximo_jogador,1)
             elif efeito == 'pular_vez':
                 for k,jogador in enumerate(self.jogadores):
-                    if jogador.id ==self.proximo_jogador.id:
+                    if jogador.get_id() == self.proximo_jogador.get_id():
                         index = (k+1)%3
                         self.proximo_jogador = self.jogadores[index]
                         break
@@ -145,14 +145,14 @@ class Jogo:
                 for carta in self.mesa.baralho.cartas:
                     carta.flip()
                 for jogador in self.jogadores:
-                    for carta in jogador.mao:
+                    for carta in jogador.get_mao():
                         carta.flip()
                 # self.mesa.ultima_carta.flip()
             elif efeito == 'mais_cinco':
                 self.darCarta(self.proximo_jogador,5)
             elif efeito == 'pular_todos':
                 for k,jogador in enumerate(self.jogadores):
-                    if jogador.id ==self.proximo_jogador.id:
+                    if jogador.get_id() ==self.proximo_jogador.get_id():
                         index = (k+2)%3
                         self.proximo_jogador = self.jogadores[index]
                         break
@@ -171,11 +171,11 @@ class Jogo:
 
     def comprarCarta(self):
         print("tentando comprar")
-        if not (self.jogador_atual.comprou_carta or self.jogador_atual.jogou_carta):
+        if not (self.jogador_atual.get_comprou_carta() or self.jogador_atual.get_jogou_carta()):
             self.jogador_atual.comprarCarta(self.mesa.baralho)
 
-            if self.jogador_atual.denunciavel:
-                self.jogador_atual.denunciavel = False
+            if self.jogador_atual.get_denunciavel():
+                self.jogador_atual.set_denunciavel(False)
 
             self.dict_jogada['tipo'] = 'comprar'
             self.dict_jogada['match_status'] = 'progress'
@@ -187,16 +187,16 @@ class Jogo:
     def passarVez(self):
         self.dict_jogada = {}
 
-        self.jogador_atual.jogou_carta = False
-        self.jogador_atual.comprou_carta = False
+        self.jogador_atual.set_jogou_carta(False)
+        self.jogador_atual.set_comprou_carta(False)
         self.jogador_atual = self.proximo_jogador
         
         for k,jogador in enumerate(self.jogadores):
-            if jogador.id ==self.proximo_jogador.id:
+            if jogador.get_id() ==self.proximo_jogador.get_id():
                 index = (k+1)%3
                 self.proximo_jogador = self.jogadores[index]
-                for jogador in self.jogadores: print("jogador: ", jogador.id)
-                print(self.proximo_jogador.id)
+                for jogador in self.jogadores: print("jogador: ", jogador.get_id())
+                print(self.proximo_jogador.get_id())
                 print(index)
                 break
 
@@ -266,10 +266,11 @@ class Jogo:
         self.mesa.ultima_carta = carta_mesa
 
         jogador_1 =dict_json['jogador_1']
-        id_jogador = jogador_1['id']
-        nome = jogador_1['nome']
-        mao = jogador_1['mao']
-        ordem = jogador_1['ordem']
+        print(jogador_1)
+        id_jogador = jogador_1['_Jogador__id']
+        nome = jogador_1['_Jogador__nome']
+        mao = jogador_1['_Jogador__mao']
+        ordem = jogador_1['_Jogador__ordem']
         mao_list =[]
 
         for carta in mao:
@@ -292,10 +293,10 @@ class Jogo:
         self.jogadores[0] = Jogador(id_jogador,nome,ordem,mao_list)
 
         jogador_2 =dict_json['jogador_2']
-        id_jogador = jogador_2['id']
-        nome = jogador_2['nome']
-        ordem = jogador_2['ordem']
-        mao = jogador_2['mao']
+        id_jogador = jogador_2['_Jogador__id']
+        nome = jogador_2['_Jogador__nome']
+        ordem = jogador_2['_Jogador__ordem']
+        mao = jogador_2['_Jogador__mao']
         mao_list =[]
 
         for carta in mao:
@@ -319,10 +320,10 @@ class Jogo:
 
 
         jogador_3 =dict_json['jogador_3']
-        id_jogador = jogador_3['id']
-        nome = jogador_3['nome']
-        ordem = jogador_3['ordem']
-        mao = jogador_3['mao']
+        id_jogador = jogador_3['_Jogador__id']
+        nome = jogador_3['_Jogador__nome']
+        ordem = jogador_3['_Jogador__ordem']
+        mao = jogador_3['_Jogador__mao']
 
         mao_list =[]
 

@@ -53,14 +53,14 @@ class Baralho():
                 aux.append(face_inverter_ordem)
                 aux2.append(face_inverter_ordem2)
 
-            face_coringa1= FaceCoringa(f'light_1',cores[i],'troca_cor','coringa')
-            face_coringa2 = FaceCoringa(f'dark_1',cores[i],'troca_cor','coringa')
+            face_coringa1 = FaceCoringa(f'light_1',cores[i],'troca_cor','coringa')
+            face_coringa2 = FaceCoringa(f'dark_1',cores2[i],'troca_cor','coringa')
             for _ in range(2):
                 aux.append(face_coringa1)
                 aux2.append(face_coringa2)
 
             face_mais_dois = FaceCoringa(f'light_6',cores[i],'mais_dois','coringa')
-            face_compra_ate_vir = FaceCoringa(f'dark_6',cores[i],'compra_ate_vir','coringa')
+            face_compra_ate_vir = FaceCoringa(f'dark_6',cores2[i],'compra_ate_vir','coringa')
             for _ in range(2):
                 aux.append(face_mais_dois)
                 aux2.append(face_compra_ate_vir)

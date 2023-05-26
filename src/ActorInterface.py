@@ -30,7 +30,7 @@ class ActorInterface(DogPlayerInterface):
             self.jogo.transform_dict_to_object(a_move)
             jogadores = self.jogo.get_jogadores()
             for k,jogador in enumerate(jogadores):
-                if jogador.id ==self.jogo.local_id:
+                if jogador.get_id() ==self.jogo.local_id:
                     self.jogo.local_position=k
                     self.jogo.right_position= (k+1)%3
                     self.jogo.left_position= k-1
@@ -45,7 +45,7 @@ class ActorInterface(DogPlayerInterface):
             index = a_move['index']
             self.jogo.jogarCarta(index)
             self.atualizarInterface()
-            if not self.jogo.jogador_atual.mao:
+            if not self.jogo.jogador_atual.get_mao():
                 sleep(0.2)
                 self.mostrarEndGame()
         
@@ -58,13 +58,13 @@ class ActorInterface(DogPlayerInterface):
             carta = self.jogo.mesa.getUltimaCarta()
             if carta.frente.simbolo == 'compra_ate_vir':
                 self.jogo.proximo_jogador.receberCartas(1, self.jogo.mesa.baralho)
-                carta_comprada = self.jogo.proximo_jogador.mao[0]
+                carta_comprada = self.jogo.proximo_jogador.get_mao()[0]
 
                 if not isinstance(carta_comprada.frente, FaceCoringa):
                     while carta_comprada.frente.cor != a_move['cor']:
                         if not isinstance(carta_comprada.frente, FaceCoringa):
                             self.jogo.proximo_jogador.receberCartas(1, self.jogo.mesa.baralho)
-                            carta_comprada = self.jogo.proximo_jogador.mao[0]
+                            carta_comprada = self.jogo.proximo_jogador.get_mao()[0]
 
             self.atualizarInterface()
         elif a_move['tipo'] == 'uno':
@@ -92,7 +92,7 @@ class ActorInterface(DogPlayerInterface):
             self.dog_server_interface.send_move(dict_inicial)
             jogadores = self.jogo.get_jogadores()
             for k,jogador in enumerate(jogadores):
-                if jogador.id ==self.jogo.local_id:
+                if jogador.get_id() ==self.jogo.local_id:
                     self.jogo.local_position=k
                     self.jogo.right_position= (k+1)%3
                     self.jogo.left_position= k-1
@@ -189,8 +189,8 @@ class ActorInterface(DogPlayerInterface):
 
 
     def comprar(self) -> None:
-        if (self.jogo.local_id == self.jogo.jogador_atual.id and 
-            not (self.jogo.jogador_atual.comprou_carta or self.jogo.jogador_atual.jogou_carta)
+        if (self.jogo.local_id == self.jogo.jogador_atual.get_id() and 
+            not (self.jogo.jogador_atual.get_comprou_carta() or self.jogo.jogador_atual.get_jogou_carta())
         ):
             self.jogo.comprarCarta()
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
@@ -204,7 +204,7 @@ class ActorInterface(DogPlayerInterface):
         self.delete_local()
         
         if direcao ==1:
-            if self.inicio_mao+6<len(self.jogo.jogadores[self.jogo.local_position].mao):
+            if self.inicio_mao+6<len(self.jogo.jogadores[self.jogo.local_position].get_mao()):
                 self.inicio_mao +=1
 
         if direcao ==0:
@@ -214,17 +214,17 @@ class ActorInterface(DogPlayerInterface):
         self.atualizarInterface()
 
     def passarVez(self):
-        if self.jogo.local_id == self.jogo.jogador_atual.id: 
+        if self.jogo.local_id == self.jogo.jogador_atual.get_id(): 
             
             self.jogo.passarVez()
 
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
         else:
-            print(self.jogo.jogador_atual.id)
+            print(self.jogo.jogador_atual.get_id())
             print('nao e sua vez')
 
     def jogarCarta(self,index) -> None:
-        if self.jogo.local_id == self.jogo.jogador_atual.id:           
+        if self.jogo.local_id == self.jogo.jogador_atual.get_id():           
    
             valida = self.jogo.jogarCarta(self.inicio_mao+index)
             if valida:
@@ -233,7 +233,7 @@ class ActorInterface(DogPlayerInterface):
                 if self.jogo.mesa.getUltimaCarta().frente.tipo == 'coringa':
                     self.escolherCor()
             
-            if not self.jogo.jogador_atual.mao:
+            if not self.jogo.jogador_atual.get_mao():
                 sleep(0.2)
                 self.mostrarEndGame()
         else:
@@ -253,8 +253,8 @@ class ActorInterface(DogPlayerInterface):
         
 
         for i in range(6):
-            if (i+self.inicio_mao) < len(self.jogo.jogadores[self.jogo.local_position].mao):
-                self.slots_local.append(self.jogo.jogadores[self.jogo.local_position].mao[i+self.inicio_mao])
+            if (i+self.inicio_mao) < len(self.jogo.jogadores[self.jogo.local_position].get_mao()):
+                self.slots_local.append(self.jogo.jogadores[self.jogo.local_position].get_mao()[i+self.inicio_mao])
             if i < len(self.slots_local):
                 button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].get_frente().get_id()])
                 self.slots_local[i] = (button_card,self.slots_local[i])
@@ -264,8 +264,8 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_right = []
 
         for i in range(5):
-            if i < len(self.jogo.jogadores[self.jogo.right_position].mao):
-                self.slots_remote_right.append(self.jogo.jogadores[self.jogo.right_position].mao[i])
+            if i < len(self.jogo.jogadores[self.jogo.right_position].get_mao()):
+                self.slots_remote_right.append(self.jogo.jogadores[self.jogo.right_position].get_mao()[i])
 
             if i <len(self.slots_remote_right):
                 identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].get_verso().get_id()}_270'])
@@ -277,8 +277,8 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_left = []
 
         for i in range(5):
-            if i < len(self.jogo.jogadores[self.jogo.left_position].mao):
-                self.slots_remote_left.append(self.jogo.jogadores[self.jogo.left_position].mao[i])
+            if i < len(self.jogo.jogadores[self.jogo.left_position].get_mao()):
+                self.slots_remote_left.append(self.jogo.jogadores[self.jogo.left_position].get_mao()[i])
 
             if i <len(self.slots_remote_left):
                 identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].get_verso().get_id()}_90'])
@@ -306,7 +306,7 @@ class ActorInterface(DogPlayerInterface):
     def mostrarEndGame(self):
         indice_jogador = self.jogo.local_position
         self.setCanvas()
-        if len(self.jogo.jogadores[indice_jogador].mao):
+        if len(self.jogo.jogadores[indice_jogador].get_mao()):
             imagem = 'perdeu'
         else:
             imagem = 'venceu'
@@ -389,13 +389,13 @@ class ActorInterface(DogPlayerInterface):
         elif carta.frente.simbolo == 'compra_ate_vir':
             carta.frente.id = cores_compra_ate_vir[cor]
             self.jogo.mesa.setUltimaCarta(carta)
-        elif carta.frente.simbolo ==  'coringa':
+        elif carta.frente.simbolo == 'coringa':
             carta.frente.id = cores_coringa[cor]
             self.jogo.mesa.setUltimaCarta(carta)
 
         self.atualizarInterface()
 
-        if self.jogo.jogador_atual.id == self.jogo.jogadores[self.jogo.local_position].id:
+        if self.jogo.jogador_atual.get_id() == self.jogo.jogadores[self.jogo.local_position].get_id():
             sleep(0.2)
 
             a = self.rectangle_id
