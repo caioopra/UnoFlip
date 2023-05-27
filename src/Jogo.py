@@ -42,11 +42,26 @@ class Jogo:
     def set_jogador_atual(self,jogador:int) -> None:
         self.jogador_atual = jogador
 
+    def comecarPartida(self, jogadores: list, id_jogador_local: int):
+        self.set_local_id(id_jogador_local)
+        self.criar_jogadores(jogadores)
+        
+        return self.transform_play_to_dict("init")
+    
     def criar_jogadores(self,jogadores):
         for i, jogador in enumerate(jogadores):
             mao = self.dar_cartas_iniciais()
-            self.jogadores[i]=Jogador(id = jogador[1], nome =jogador[0],ordem=jogador[2], mao = mao)
+            self.jogadores[i]=Jogador(id = jogador[1], nome =jogador[0], mao = mao)
+    
+    def configurarJogadores(self):
+        for k, jogador in enumerate(self.jogadores):
+            if jogador.get_id() == self.local_id:
+                self.local_position = k
+                self.right_position = (k+1) % 3
+                self.left_position = k-1
         
+        self.jogador_atual = self.jogadores[0]
+        self.proximo_jogador = self.jogadores[1]
 
     def dar_cartas_iniciais(self) -> list:
         mao = []
@@ -94,17 +109,14 @@ class Jogo:
         carta = self.jogador_atual.get_mao()[index]
 
         if isinstance(carta.frente,FaceCoringa):
-
             return True
 
         elif self.mesa.ultima_carta.frente.cor == carta.frente.cor:
-
             return True
 
         elif self.mesa.ultima_carta.frente.get_simbolo() == carta.frente.get_simbolo():
-
             return True 
-        
+
         else:
             return False
 
@@ -124,7 +136,6 @@ class Jogo:
         
         self.dict_jogada['tipo'] = 'uno'
         self.dict_jogada['match_status'] = 'progress'
-
 
 
     def aplicarEfeito(self,index):
@@ -160,6 +171,7 @@ class Jogo:
                 self.jogadores = self.jogadores[::-1]
                 a = [self.left_position,self.local_position,self.right_position]
                 a = a[::-1]
+                print(a)
                 self.left_position = a[0]
                 self.local_position = a[1]
                 self.right_position = a[2]
@@ -170,7 +182,6 @@ class Jogo:
 
 
     def comprarCarta(self):
-        print("tentando comprar")
         if not (self.jogador_atual.get_comprou_carta() or self.jogador_atual.get_jogou_carta()):
             self.jogador_atual.comprarCarta(self.mesa.baralho)
 
@@ -179,12 +190,12 @@ class Jogo:
 
             self.dict_jogada['tipo'] = 'comprar'
             self.dict_jogada['match_status'] = 'progress'
-            print(self.dict_jogada, self.dict_jogada['match_status'])
         else:
             print('ja atuou')
 
 
     def passarVez(self):
+        print(f"{self.jogador_atual.get_id()} passando a vez para ", end="")
         self.dict_jogada = {}
 
         self.jogador_atual.set_jogou_carta(False)
@@ -195,11 +206,10 @@ class Jogo:
             if jogador.get_id() ==self.proximo_jogador.get_id():
                 index = (k+1)%3
                 self.proximo_jogador = self.jogadores[index]
-                for jogador in self.jogadores: print("jogador: ", jogador.get_id())
-                print(self.proximo_jogador.get_id())
-                print(index)
+                # for jogador in self.jogadores: print("jogador: ", jogador.get_id())
                 break
 
+        print("proximo jogador: ", self.jogador_atual.get_id())
         self.dict_jogada['tipo'] = 'passar'
         self.dict_jogada['match_status'] = 'next'
 
@@ -266,11 +276,9 @@ class Jogo:
         self.mesa.ultima_carta = carta_mesa
 
         jogador_1 =dict_json['jogador_1']
-        print(jogador_1)
         id_jogador = jogador_1['_Jogador__id']
         nome = jogador_1['_Jogador__nome']
         mao = jogador_1['_Jogador__mao']
-        ordem = jogador_1['_Jogador__ordem']
         mao_list =[]
 
         for carta in mao:
@@ -290,12 +298,11 @@ class Jogo:
                 verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             mao_list.append(Carta(frente,verso))
 
-        self.jogadores[0] = Jogador(id_jogador,nome,ordem,mao_list)
+        self.jogadores[0] = Jogador(id_jogador,nome,mao_list)
 
         jogador_2 =dict_json['jogador_2']
         id_jogador = jogador_2['_Jogador__id']
         nome = jogador_2['_Jogador__nome']
-        ordem = jogador_2['_Jogador__ordem']
         mao = jogador_2['_Jogador__mao']
         mao_list =[]
 
@@ -316,13 +323,12 @@ class Jogo:
                 verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             mao_list.append(Carta(frente,verso))
 
-        self.jogadores[1] = Jogador(id_jogador,nome,ordem,mao_list)
+        self.jogadores[1] = Jogador(id_jogador,nome,mao_list)
 
 
         jogador_3 =dict_json['jogador_3']
         id_jogador = jogador_3['_Jogador__id']
         nome = jogador_3['_Jogador__nome']
-        ordem = jogador_3['_Jogador__ordem']
         mao = jogador_3['_Jogador__mao']
 
         mao_list =[]
@@ -344,6 +350,6 @@ class Jogo:
                 verso = FaceCoringa(verso['id'],verso['cor'],verso['simbolo'],verso['tipo'])
             mao_list.append(Carta(frente,verso))
 
-        self.jogadores[2] = Jogador(id_jogador,nome,ordem,mao_list)
+        self.jogadores[2] = Jogador(id_jogador,nome,mao_list)
 
         self.jogador_atual = dict_json['jogador_atual']

@@ -86,18 +86,12 @@ class ActorInterface(DogPlayerInterface):
         if message == 'Partida iniciada':
             jogadores = start_status.get_players()
             id_jogador_local = start_status.get_local_id()
-            self.jogo.set_local_id(id_jogador_local)
-            self.jogo.criar_jogadores(jogadores)
-            dict_inicial = self.jogo.transform_play_to_dict('init')
+            
+            dict_inicial = self.jogo.comecarPartida(jogadores, id_jogador_local)
             self.dog_server_interface.send_move(dict_inicial)
-            jogadores = self.jogo.get_jogadores()
-            for k,jogador in enumerate(jogadores):
-                if jogador.get_id() ==self.jogo.local_id:
-                    self.jogo.local_position=k
-                    self.jogo.right_position= (k+1)%3
-                    self.jogo.left_position= k-1
-            self.jogo.jogador_atual = self.jogo.jogadores[0]
-            self.jogo.proximo_jogador =self.jogo.jogadores[1]
+
+            self.jogo.configurarJogadores()
+
             self.start_table()
             
 
@@ -220,7 +214,6 @@ class ActorInterface(DogPlayerInterface):
 
             self.dog_server_interface.send_move(self.jogo.dict_jogada)
         else:
-            print(self.jogo.jogador_atual.get_id())
             print('nao e sua vez')
 
     def jogarCarta(self,index) -> None:
@@ -354,6 +347,10 @@ class ActorInterface(DogPlayerInterface):
         self.verde = PhotoImage(file = f"table_images/{quadrado4}.png")
         self.button4_id = self.canvas.create_image(535, 465, image=self.verde)
         self.canvas.tag_bind(self.button4_id, "<Button-1>", lambda x: self.mudaCor(quadrado4))
+        
+        # jogo.mudarCor
+        
+        # atualiza interface e faz envio da jogada, destruindo a tela criada
 
     def mudaCor(self, cor: str):
         carta = self.jogo.mesa.getUltimaCarta()
@@ -392,7 +389,8 @@ class ActorInterface(DogPlayerInterface):
         elif carta.frente.simbolo == 'coringa':
             carta.frente.id = cores_coringa[cor]
             self.jogo.mesa.setUltimaCarta(carta)
-
+        ################
+        # ficar no Actor
         self.atualizarInterface()
 
         if self.jogo.jogador_atual.get_id() == self.jogo.jogadores[self.jogo.local_position].get_id():

@@ -2,10 +2,9 @@ import json
 
 
 class Jogador:
-    def __init__(self, id: str, nome: str, ordem, mao: list) -> None:
+    def __init__(self, id: str, nome: str, mao: list) -> None:
         self.__id = id
         self.__nome = nome
-        self.__ordem = ordem
         self.__mao = mao
 
         self.__denunciavel = False
@@ -23,12 +22,6 @@ class Jogador:
     
     def set_nome(self, nome):
         self.__nome = nome
-        
-    def get_ordem(self):
-        return self.__ordem
-    
-    def set_ordem(self, ordem):
-        self.__ordem = ordem
         
     def get_mao(self):
         return self.__mao
@@ -58,7 +51,6 @@ class Jogador:
         self.__denunciavel = False
 
     def comprarCarta(self, baralho):
-        print("comprando carta no jogador")
         self.__mao.insert(0, baralho.darCarta())
         self.__comprou_carta = True
         self.__denunciavel = False
