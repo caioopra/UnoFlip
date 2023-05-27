@@ -11,43 +11,37 @@ class Jogador:
         self.__jogou_carta = False
         self.__comprou_carta = False
 
-    def get_id(self):
+    def getId(self):
         return self.__id
-    
-    def set_id(self, id):
-        self.__id = id
         
-    def get_nome(self):
+    def getNome(self):
         return self.__nome
     
-    def set_nome(self, nome):
+    def setNome(self, nome):
         self.__nome = nome
         
-    def get_mao(self):
+    def getMao(self):
         return self.__mao
-    
-    def set_mao(self, mao):
-        self.__mao = mao
         
-    def get_denunciavel(self):
+    def getDenunciavel(self):
         return self.__denunciavel
     
-    def set_denunciavel(self, estado):
+    def setDenunciavel(self, estado):
         self.__denunciavel = estado
     
-    def get_jogou_carta(self):
+    def getJogouCarta(self):
         return self.__jogou_carta
 
-    def set_jogou_carta(self, jogou):
+    def setJogouCarta(self, jogou):
         self.__jogou_carta = jogou
         
-    def get_comprou_carta(self):
+    def getComprouCarta(self):
         return self.__comprou_carta
     
-    def set_comprou_carta(self, comprou):
+    def setComprouCarta(self, comprou):
         self.__comprou_carta = comprou
 
-    def gritar_uno(self):
+    def gritarUno(self):
         self.__denunciavel = False
 
     def comprarCarta(self, baralho):
