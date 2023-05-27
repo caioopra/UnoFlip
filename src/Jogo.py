@@ -174,7 +174,7 @@ class Jogo:
     def aplicarEfeito(self, index):
         carta = self.getJogadorAtual().getMao()[index]
 
-        if isinstance(carta.frente, FaceNumerica) or isinstance(
+        if isinstance(carta.frente, FaceCoringa) or isinstance(
             carta.frente, FaceColoridaComPoder
         ):
             efeito = carta.frente.simbolo
@@ -203,12 +203,8 @@ class Jogo:
                         break
             elif efeito == "inverter_ordem":
                 self.__jogadores = self.__jogadores[::-1]
-                a = [self.getLeftPosition(), self.getLocalPosition(), self.getRightPosition()]
-                a = a[::-1]
-                print(a)
-                self.__left_position = a[0]
-                self.__local_position = a[1]
-                self.__right_position = a[2]
+                self.__left_position, self.__right_position = self.__right_position, self.__left_position
+
             elif efeito == "compra_ate_vir":
                 pass
             elif efeito == "mais_dois":
@@ -247,6 +243,16 @@ class Jogo:
         print("proximo jogador: ", self.__jogador_atual.getId())
         self.__dict_jogada["tipo"] = "passar"
         self.__dict_jogada["match_status"] = "next"
+        
+    def compraAteVir(self, cor: str):
+        self.getProximoJogador().receberCartas(1, self.getMesa().baralho)
+        carta_comprada = self.getProximoJogador().getMao()[0]
+
+        if not isinstance(carta_comprada.frente, FaceCoringa):
+            while carta_comprada.frente.cor != cor:
+                if not isinstance(carta_comprada.frente, FaceCoringa):
+                    self.getProximoJogador().receberCartas(1, self.getMesa().baralho)
+                    carta_comprada = self.getProximoJogador().getMao()[0]
 
     def transform_play_to_dict(self, tipo_jogada) -> dict:
         jogada = {}

@@ -57,16 +57,10 @@ class ActorInterface(DogPlayerInterface):
 
             carta = self.jogo.getMesa().getUltimaCarta()
             if carta.frente.simbolo == 'compra_ate_vir':
-                self.jogo.getProximoJogador().receberCartas(1, self.jogo.getMesa().baralho)
-                carta_comprada = self.jogo.getProximoJogador().getMao()[0]
-
-                if not isinstance(carta_comprada.frente, FaceCoringa):
-                    while carta_comprada.frente.cor != a_move['cor']:
-                        if not isinstance(carta_comprada.frente, FaceCoringa):
-                            self.jogo.getProximoJogador().receberCartas(1, self.jogo.getMesa().baralho)
-                            carta_comprada = self.jogo.getProximoJogador().getMao()[0]
+                self.jogo.compraAteVir(a_move["cor"])
 
             self.atualizarInterface()
+
         elif a_move['tipo'] == 'uno':
             self.jogo.getJogadorAtual().gritarUno()
             self.jogo.verificar_UNO()
