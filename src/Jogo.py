@@ -99,12 +99,12 @@ class Jogo:
     def dar_cartas_iniciais(self) -> list:
         mao = []
         for _ in range(2):
-            carta = self.getMesa().baralho.cartas.pop()
+            carta = self.getMesa().getBaralho().cartas.pop()
             mao.append(carta)
         return mao
 
     def darCarta(self, jogador, quantidade):
-        jogador.receberCartas(quantidade, self.getMesa().baralho)
+        jogador.receberCartas(quantidade, self.getMesa().getBaralho())
 
         if self.getJogadorAtual().getDenunciavel():
             self.getJogadorAtual().setDenunciavel(False)
@@ -145,10 +145,10 @@ class Jogo:
         if isinstance(carta.frente, FaceCoringa):
             return True
 
-        elif self.getMesa().ultima_carta.frente.cor == carta.frente.cor:
+        elif self.getMesa().getUltimaCarta().frente.cor == carta.frente.cor:
             return True
 
-        elif self.getMesa().ultima_carta.frente.get_simbolo() == carta.frente.get_simbolo():
+        elif self.getMesa().getUltimaCarta().frente.get_simbolo() == carta.frente.get_simbolo():
             return True
 
         else:
@@ -180,6 +180,9 @@ class Jogo:
             efeito = carta.frente.simbolo
             if efeito == "mais_um":
                 self.darCarta(self.getProximoJogador(), 1)
+            elif efeito == "inverter_ordem":
+                self.__jogadores = self.__jogadores[::-1]
+                self.__left_position, self.__right_position = self.__right_position, self.__left_position
             elif efeito == "pular_vez":
                 for k, jogador in enumerate(self.getJogadores()):
                     if jogador.getId() == self.getProximoJogador().getId():
@@ -187,12 +190,11 @@ class Jogo:
                         self.setProximoJogador(self.getJogadores()[index])
                         break
             elif efeito == "girar":
-                for carta in self.getMesa().baralho.cartas:
+                for carta in self.getMesa().getBaralho().cartas:
                     carta.flip()
                 for jogador in self.__jogadores:
                     for carta in jogador.getMao():
                         carta.flip()
-                # self.mesa.ultima_carta.flip()
             elif efeito == "mais_cinco":
                 self.darCarta(self.getProximoJogador(), 5)
             elif efeito == "pular_todos":
@@ -201,21 +203,21 @@ class Jogo:
                         index = (k + 2) % 3
                         self.setProximoJogador(self.getJogadores()[index])
                         break
-            elif efeito == "inverter_ordem":
-                self.__jogadores = self.__jogadores[::-1]
-                self.__left_position, self.__right_position = self.__right_position, self.__left_position
 
             elif efeito == "compra_ate_vir":
                 pass
             elif efeito == "mais_dois":
                 self.darCarta(self.getProximoJogador(), 2)
 
+    def verificarTurno(self) -> bool:
+        return self.getLocalId() == self.getJogadorAtual().getId()
+
     def comprarCarta(self):
         if not (
             self.getJogadorAtual().getComprouCarta()
             or self.getJogadorAtual().getJogouCarta()
         ):
-            self.getJogadorAtual().comprarCarta(self.getMesa().baralho)
+            self.getJogadorAtual().comprarCarta(self.getMesa().getBaralho())
 
             if self.getJogadorAtual().getDenunciavel():
                 self.getJogadorAtual().setDenunciavel(False)
@@ -245,13 +247,13 @@ class Jogo:
         self.__dict_jogada["match_status"] = "next"
         
     def compraAteVir(self, cor: str):
-        self.getProximoJogador().receberCartas(1, self.getMesa().baralho)
+        self.getProximoJogador().receberCartas(1, self.getMesa().getBaralho())
         carta_comprada = self.getProximoJogador().getMao()[0]
 
         if not isinstance(carta_comprada.frente, FaceCoringa):
             while carta_comprada.frente.cor != cor:
                 if not isinstance(carta_comprada.frente, FaceCoringa):
-                    self.getProximoJogador().receberCartas(1, self.getMesa().baralho)
+                    self.getProximoJogador().receberCartas(1, self.getMesa().getBaralho())
                     carta_comprada = self.getProximoJogador().getMao()[0]
 
     def transform_play_to_dict(self, tipo_jogada) -> dict:
@@ -260,12 +262,12 @@ class Jogo:
         if tipo_jogada == "init":
             jogada["tipo"] = "init"
             jogada["match_status"] = "progress"
-            jogada["baralho"] = self.getMesa().baralho.to_json()
+            jogada["baralho"] = self.getMesa().getBaralho().to_json()
             jogada["jogador_1"] = self.__jogadores[0].to_json()
             jogada["jogador_2"] = self.__jogadores[1].to_json()
             jogada["jogador_3"] = self.__jogadores[2].to_json()
             jogada["jogador_atual"] = self.getJogadorAtual()
-            jogada["mesa"] = self.getMesa().ultima_carta.to_json()
+            jogada["mesa"] = self.getMesa().getUltimaCarta().to_json()
 
         return jogada
 
@@ -303,7 +305,7 @@ class Jogo:
                 )
             baralho_list.append(Carta(frente, verso))
 
-        self.getMesa().baralho.cartas = baralho_list
+        self.getMesa().getBaralho().cartas = baralho_list
 
         carta_mesa = dict_json["mesa"]
 
@@ -336,7 +338,7 @@ class Jogo:
 
         carta_mesa = Carta(frente, verso)
 
-        self.getMesa().ultima_carta = carta_mesa
+        self.getMesa().setUltimaCarta(carta_mesa)
 
         jogador_1 = dict_json["jogador_1"]
         id_jogador = jogador_1["_Jogador__id"]

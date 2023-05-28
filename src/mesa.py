@@ -1,21 +1,25 @@
 from random import randint
+from Baralho import Baralho
 
 
 class Mesa:
-    def __init__(self,baralho) -> None:
-        self.baralho = baralho
-        # self.ultima_carta = self.baralho.cartas.pop()
+    def __init__(self, baralho: Baralho) -> None:
+        self.__baralho = baralho
         self.setCartaInicial()
 
     def getUltimaCarta(self):
-        return self.ultima_carta
+        return self.__ultima_carta
     
     def setUltimaCarta(self, carta):
-        self.ultima_carta=carta
+        self.__ultima_carta=carta
     
     def setCartaInicial(self):
-        carta = self.baralho.cartas.pop()
+        carta = self.__baralho.cartas.pop()
         self.setUltimaCarta(carta)
         if carta.frente.tipo == 'coringa':
-            self.baralho.cartas.insert(randint(0, len(self.baralho.cartas)-2), carta)
+            self.__baralho.cartas.insert(randint(0, len(self.__baralho.cartas)-2), carta)
             self.setCartaInicial()
+            
+    def getBaralho(self) -> Baralho:
+        return self.__baralho
+

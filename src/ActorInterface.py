@@ -177,16 +177,12 @@ class ActorInterface(DogPlayerInterface):
 
 
     def comprar(self) -> None:
-        if (self.jogo.getLocalId() == self.jogo.getJogadorAtual().getId() and 
-            not (self.jogo.getJogadorAtual().getComprouCarta() or self.jogo.getJogadorAtual().getJogouCarta())
-        ):
-            self.jogo.comprarCarta()
+        if self.jogo.verificarTurno():
+            self.jogo.comprarCarta()#
             self.dog_server_interface.send_move(self.jogo.getDictJogada())
             self.atualizarInterface()
         else:
             print('nao e sua vez')
-
-            
 
     def mover_mao(self,direcao: int) -> None:
         self.delete_local()
@@ -202,7 +198,7 @@ class ActorInterface(DogPlayerInterface):
         self.atualizarInterface()
 
     def passarVez(self):
-        if self.jogo.getLocalId() == self.jogo.getJogadorAtual().getId(): 
+        if self.jogo.verificarTurno(): 
             
             self.jogo.passarVez()
 
@@ -211,7 +207,7 @@ class ActorInterface(DogPlayerInterface):
             print('nao e sua vez')
 
     def jogarCarta(self,index) -> None:
-        if self.jogo.getLocalId() == self.jogo.getJogadorAtual().getId():           
+        if self.jogo.verificarTurno():           
    
             valida = self.jogo.jogarCarta(self.inicio_mao+index)
             if valida:
@@ -347,7 +343,7 @@ class ActorInterface(DogPlayerInterface):
         # atualiza interface e faz envio da jogada, destruindo a tela criada
 
     def mudaCor(self, cor: str):
-        carta = self.jogogetMesa().getUltimaCarta()
+        carta = self.jogo.getMesa().getUltimaCarta()
         carta.frente.cor = cor
  
         cores_mais_dois = {

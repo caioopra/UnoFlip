@@ -10,8 +10,6 @@ class Baralho():
         self.cartas = []
         self.criar_baralho()
 
-
-
     def criar_baralho(self) -> None:
         cores = ['amarelo','vermelho', 'azul','verde']
         cores2 = ['laranja','rosa', 'roxo', 'ciano']
@@ -30,25 +28,25 @@ class Baralho():
                     aux2.append(face_numerica_2)
 
             face_girar = FaceColoridaComPoder(f'light_{pos[i]+9}',cores[i],'girar','colorida_poder')
-            face_girar2 = FaceColoridaComPoder(f'dark_{pos[i]+9}',cores[i],'girar','colorida_poder')
+            face_girar2 = FaceColoridaComPoder(f'dark_{pos[i]+9}',cores2[i],'girar','colorida_poder')
             for _ in range(2):
                 aux.append(face_girar)
                 aux2.append(face_girar2)
 
             face_compre_um = FaceColoridaComPoder(f'light_{pos[i]+10}',cores[i],'mais_um','colorida_poder')
-            face_compre_cinco = FaceColoridaComPoder(f'dark_{pos[i]+10}',cores[i],'mais_cinco','colorida_poder')
+            face_compre_cinco = FaceColoridaComPoder(f'dark_{pos[i]+10}',cores2[i],'mais_cinco','colorida_poder')
             for _ in range(2):
                 aux.append(face_compre_um)
                 aux2.append(face_compre_cinco)
 
             face_pular_vez = FaceColoridaComPoder(f'light_{pos[i]+11}',cores[i],'pular_vez','colorida_poder')
-            face_pular_todos = FaceColoridaComPoder(f'dark_{pos[i]+11}',cores[i],'pular_todos','colorida_poder')
+            face_pular_todos = FaceColoridaComPoder(f'dark_{pos[i]+11}',cores2[i],'pular_todos','colorida_poder')
             for _ in range(2):
                 aux.append(face_pular_vez)
                 aux2.append(face_pular_todos)
             
             face_inverter_ordem = FaceColoridaComPoder(f'light_{pos[i]+12}',cores[i],'inverter_ordem','colorida_poder')
-            face_inverter_ordem2 = FaceColoridaComPoder(f'dark_{pos[i]+12}',cores[i],'inverter_ordem','colorida_poder')
+            face_inverter_ordem2 = FaceColoridaComPoder(f'dark_{pos[i]+12}',cores2[i],'inverter_ordem','colorida_poder')
             for _ in range(2):
                 aux.append(face_inverter_ordem)
                 aux2.append(face_inverter_ordem2)
