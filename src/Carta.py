@@ -3,17 +3,17 @@ import json
 
 class Carta():
     def __init__(self, frente: Face, verso: Face) -> None:
-        self.frente = frente
-        self.verso = verso
+        self.__frente = frente
+        self.__verso = verso
 
-    def get_frente(self) -> Face:
-        return self.frente
+    def getFrente(self) -> Face:
+        return self.__frente
 
-    def get_verso(self) -> Face:
-        return self.verso
+    def getVerso(self) -> Face:
+        return self.__verso
 
     def flip(self) -> None:
-        self.frente, self.verso = self.verso, self.frente
+        self.__frente, self.__verso = self.__verso, self.__frente
 
     def to_json(self) -> dict:
         a =  json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

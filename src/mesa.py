@@ -16,7 +16,7 @@ class Mesa:
     def setCartaInicial(self):
         carta = self.__baralho.getCartas().pop()
         self.setUltimaCarta(carta)
-        if carta.frente.tipo == "coringa":
+        if carta.getFrente().tipo == "coringa":
             self.__baralho.getCartas().insert(
                 randint(0, len(self.__baralho.getCartas()) - 2), carta
             )

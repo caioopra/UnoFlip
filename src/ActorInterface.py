@@ -58,7 +58,7 @@ class ActorInterface(DogPlayerInterface):
             self.mudaCor(a_move['cor'])
 
             carta = self.jogo.getMesa().getUltimaCarta()
-            if carta.frente.simbolo == 'compra_ate_vir':
+            if carta.getFrente().simbolo == 'compra_ate_vir':
                 self.jogo.compraAteVir(a_move["cor"])
 
             self.atualizarInterface()
@@ -216,7 +216,7 @@ class ActorInterface(DogPlayerInterface):
             if valida:
                 self.dog_server_interface.send_move(self.jogo.getDictJogada())
                 self.atualizarInterface()
-                if self.jogo.getMesa().getUltimaCarta().frente.tipo == 'coringa':
+                if self.jogo.getMesa().getUltimaCarta().getFrente().tipo == 'coringa':
                     self.escolherCor()
             
             if not self.jogo.getJogadorAtual().getMao():
@@ -242,7 +242,7 @@ class ActorInterface(DogPlayerInterface):
             if (i+self.inicio_mao) < len(self.jogo.getJogadores()[self.jogo.getLocalPosition()].getMao()):
                 self.slots_local.append(self.jogo.getJogadores()[self.jogo.getLocalPosition()].getMao()[i+self.inicio_mao])
             if i < len(self.slots_local):
-                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].get_frente().getId()])
+                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].getFrente().getId()])
                 self.slots_local[i] = (button_card,self.slots_local[i])
                 self.canvas.tag_bind(button_card, "<Button-1>", funcs[i])
             
@@ -254,7 +254,7 @@ class ActorInterface(DogPlayerInterface):
                 self.slots_remote_right.append(self.jogo.getJogadores()[self.jogo.getRightPosition()].getMao()[i])
 
             if i <len(self.slots_remote_right):
-                identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].get_verso().getId()}_270'])
+                identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].getVerso().getId()}_270'])
                 self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
 
 
@@ -267,7 +267,7 @@ class ActorInterface(DogPlayerInterface):
                 self.slots_remote_left.append(self.jogo.getJogadores()[self.jogo.getLeftPosition()].getMao()[i])
 
             if i <len(self.slots_remote_left):
-                identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].get_verso().getId()}_90'])
+                identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].getVerso().getId()}_90'])
                 self.slots_remote_left[i] = (identificator,self.slots_remote_left[i])
 
 
@@ -280,7 +280,7 @@ class ActorInterface(DogPlayerInterface):
 
         carta = self.jogo.getMesa().getUltimaCarta()
 
-        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[carta.get_frente().getId()])
+        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[carta.getFrente().getId()])
 
 
     def delete_local(self) -> None:
@@ -302,7 +302,7 @@ class ActorInterface(DogPlayerInterface):
 
     def escolherCor(self):
         carta = self.jogo.getMesa().getUltimaCarta()
-        cor = carta.frente.id[0]
+        cor = carta.getFrente().id[0]
         
         if cor == "l":
             retangulo = 'Rectangle_light'
@@ -347,7 +347,7 @@ class ActorInterface(DogPlayerInterface):
 
     def mudaCor(self, cor: str):
         carta = self.jogo.getMesa().getUltimaCarta()
-        carta.frente.cor = cor
+        carta.getFrente().cor = cor
  
         cores_mais_dois = {
             'amarelo': 'light_7',
@@ -372,15 +372,15 @@ class ActorInterface(DogPlayerInterface):
             'roxo': 'dark_4',
             'ciano': 'dark_5'
         }
-        print(carta.frente.simbolo)
-        if carta.frente.simbolo == 'mais_dois':
-            carta.frente.id = cores_mais_dois[cor]
+        print(carta.getFrente().simbolo)
+        if carta.getFrente().simbolo == 'mais_dois':
+            carta.getFrente().id = cores_mais_dois[cor]
             self.jogo.getMesa().setUltimaCarta(carta)
-        elif carta.frente.simbolo == 'compra_ate_vir':
-            carta.frente.id = cores_compra_ate_vir[cor]
+        elif carta.getFrente().simbolo == 'compra_ate_vir':
+            carta.getFrente().id = cores_compra_ate_vir[cor]
             self.jogo.getMesa().setUltimaCarta(carta)
-        elif carta.frente.simbolo == 'troca_cor':
-            carta.frente.id = cores_coringa[cor]
+        elif carta.getFrente().simbolo == 'troca_cor':
+            carta.getFrente().id = cores_coringa[cor]
             self.jogo.getMesa().setUltimaCarta(carta)
         ################
         # ficar no Actor

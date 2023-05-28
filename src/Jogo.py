@@ -143,13 +143,13 @@ class Jogo:
     def verificarValida(self, index):
         carta = self.getJogadorAtual().getMao()[index]
 
-        if isinstance(carta.frente, FaceCoringa):
+        if isinstance(carta.getFrente(), FaceCoringa):
             return True
 
-        elif self.getMesa().getUltimaCarta().frente.cor == carta.frente.cor:
+        elif self.getMesa().getUltimaCarta().getFrente().cor == carta.getFrente().cor:
             return True
 
-        elif self.getMesa().getUltimaCarta().frente.get_simbolo() == carta.frente.get_simbolo():
+        elif self.getMesa().getUltimaCarta().getFrente().get_simbolo() == carta.getFrente().get_simbolo():
             return True
 
         else:
@@ -175,10 +175,10 @@ class Jogo:
     def aplicarEfeito(self, index):
         carta = self.getJogadorAtual().getMao()[index]
 
-        if isinstance(carta.frente, FaceCoringa) or isinstance(
-            carta.frente, FaceColoridaComPoder
+        if isinstance(carta.getFrente(), FaceCoringa) or isinstance(
+            carta.getFrente(), FaceColoridaComPoder
         ):
-            efeito = carta.frente.simbolo
+            efeito = carta.getFrente().simbolo
             if efeito == "mais_um":
                 self.darCarta(self.getProximoJogador(), 1)
             elif efeito == "inverter_ordem":
@@ -260,9 +260,9 @@ class Jogo:
         self.getProximoJogador().receberCartas(1, self.getMesa().getBaralho())
         carta_comprada = self.getProximoJogador().getMao()[0]
 
-        if not isinstance(carta_comprada.frente, FaceCoringa):
-            while carta_comprada.frente.cor != cor:
-                if not isinstance(carta_comprada.frente, FaceCoringa):
+        if not isinstance(carta_comprada.getFrente(), FaceCoringa):
+            while carta_comprada.getFrente().cor != cor:
+                if not isinstance(carta_comprada.getFrente(), FaceCoringa):
                     self.getProximoJogador().receberCartas(1, self.getMesa().getBaralho())
                     carta_comprada = self.getProximoJogador().getMao()[0]
 
@@ -282,13 +282,13 @@ class Jogo:
         return jogada
 
     def transform_dict_to_object(self, dict_json: dict):
-        baralho = dict_json["baralho"]["cartas"]
+        baralho = dict_json["baralho"]["_Baralho__cartas"]
 
         baralho_list = []
 
         for carta in baralho:
-            frente = carta["frente"]
-            verso = carta["verso"]
+            frente = carta["_Carta__frente"]
+            verso = carta["_Carta__verso"]
             if frente["tipo"] == "numerica":
                 frente = FaceNumerica(
                     frente["id"], frente["cor"], frente["simbolo"], frente["tipo"]
@@ -319,8 +319,8 @@ class Jogo:
 
         carta_mesa = dict_json["mesa"]
 
-        frente = carta_mesa["frente"]
-        verso = carta_mesa["verso"]
+        frente = carta_mesa["_Carta__frente"]
+        verso = carta_mesa["_Carta__verso"]
         if frente["tipo"] == "numerica":
             frente = FaceNumerica(
                 frente["id"], frente["cor"], frente["simbolo"], frente["tipo"]
@@ -357,8 +357,8 @@ class Jogo:
         mao_list = []
 
         for carta in mao:
-            frente = carta["frente"]
-            verso = carta["verso"]
+            frente = carta["_Carta__frente"]
+            verso = carta["_Carta__verso"]
             if frente["tipo"] == "numerica":
                 frente = FaceNumerica(
                     frente["id"], frente["cor"], frente["simbolo"], frente["tipo"]
@@ -394,8 +394,8 @@ class Jogo:
         mao_list = []
 
         for carta in mao:
-            frente = carta["frente"]
-            verso = carta["verso"]
+            frente = carta["_Carta__frente"]
+            verso = carta["_Carta__verso"]
             if frente["tipo"] == "numerica":
                 frente = FaceNumerica(
                     frente["id"], frente["cor"], frente["simbolo"], frente["tipo"]
@@ -432,8 +432,8 @@ class Jogo:
         mao_list = []
 
         for carta in mao:
-            frente = carta["frente"]
-            verso = carta["verso"]
+            frente = carta["_Carta__frente"]
+            verso = carta["_Carta__verso"]
             if frente["tipo"] == "numerica":
                 frente = FaceNumerica(
                     frente["id"], frente["cor"], frente["simbolo"], frente["tipo"]

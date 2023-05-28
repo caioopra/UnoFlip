@@ -10,7 +10,7 @@ class Baralho():
         self.__cartas = []
         self.criar_baralho()
 
-    def getCartas(self) -> list(Carta):
+    def getCartas(self):
         return self.__cartas
 
     def setCartas(self, cartas: list) -> None:
