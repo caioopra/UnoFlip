@@ -182,7 +182,16 @@ class Jogo:
                 self.darCarta(self.getProximoJogador(), 1)
             elif efeito == "inverter_ordem":
                 self.__jogadores = self.__jogadores[::-1]
-                self.__left_position, self.__right_position = self.__right_position, self.__left_position
+                
+                if self.getLocalPosition() == 0:
+                    self.__left_position, self.__right_position, self.__local_position = self.__right_position, self.__local_position, self.__left_position
+                elif self.getLocalPosition() == 1:
+                    self.__right_position, self.__left_position = self.__left_position, self.__right_position
+                elif self.getLocalPosition() == 2:
+                    self.__left_position, self.__right_position, self.__local_position = self.__local_position, self.__left_position, self.__right_position
+                    
+                self.setProximoJogador(self.getJogadores()[(self.getLocalPosition() + 1) % 3])
+
             elif efeito == "pular_vez":
                 for k, jogador in enumerate(self.getJogadores()):
                     if jogador.getId() == self.getProximoJogador().getId():
