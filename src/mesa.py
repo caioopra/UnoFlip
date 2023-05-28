@@ -9,17 +9,18 @@ class Mesa:
 
     def getUltimaCarta(self):
         return self.__ultima_carta
-    
+
     def setUltimaCarta(self, carta):
-        self.__ultima_carta=carta
-    
+        self.__ultima_carta = carta
+
     def setCartaInicial(self):
-        carta = self.__baralho.cartas.pop()
+        carta = self.__baralho.getCartas().pop()
         self.setUltimaCarta(carta)
-        if carta.frente.tipo == 'coringa':
-            self.__baralho.cartas.insert(randint(0, len(self.__baralho.cartas)-2), carta)
+        if carta.frente.tipo == "coringa":
+            self.__baralho.getCartas().insert(
+                randint(0, len(self.__baralho.getCartas()) - 2), carta
+            )
             self.setCartaInicial()
-            
+
     def getBaralho(self) -> Baralho:
         return self.__baralho
-

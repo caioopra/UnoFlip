@@ -99,7 +99,7 @@ class Jogo:
     def dar_cartas_iniciais(self) -> list:
         mao = []
         for _ in range(2):
-            carta = self.getMesa().getBaralho().cartas.pop()
+            carta = self.getMesa().getBaralho().getCartas().pop()
             mao.append(carta)
         return mao
 
@@ -200,7 +200,7 @@ class Jogo:
                         self.setProximoJogador(self.getJogadores()[index])
                         break
             elif efeito == "girar":
-                for carta in self.getMesa().getBaralho().cartas:
+                for carta in self.getMesa().getBaralho().getCartas():
                     carta.flip()
                 for jogador in self.__jogadores:
                     for carta in jogador.getMao():
@@ -315,7 +315,7 @@ class Jogo:
                 )
             baralho_list.append(Carta(frente, verso))
 
-        self.getMesa().getBaralho().cartas = baralho_list
+        self.getMesa().getBaralho().setCartas(baralho_list)
 
         carta_mesa = dict_json["mesa"]
 

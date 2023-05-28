@@ -7,8 +7,14 @@ import json
 class Baralho():
     
     def __init__(self) -> None:
-        self.cartas = []
+        self.__cartas = []
         self.criar_baralho()
+
+    def getCartas(self) -> list(Carta):
+        return self.__cartas
+
+    def setCartas(self, cartas: list) -> None:
+        self.__cartas = cartas
 
     def criar_baralho(self) -> None:
         cores = ['amarelo','vermelho', 'azul','verde']
@@ -69,11 +75,7 @@ class Baralho():
                 shuffle(aux2)
 
             for i in range(len(aux)):
-                self.cartas.append(Carta(aux[i],aux2[i]))
-
-
-    def embaralhar(self) -> None:
-        shuffle(self.cartas)
+                self.__cartas.append(Carta(aux[i],aux2[i]))
 
     def to_json(self) -> dict:
         a =  json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
@@ -82,4 +84,4 @@ class Baralho():
         return json_
 
     def darCarta(self):
-        return self.cartas.pop(0)
+        return self.__cartas.pop(0)
