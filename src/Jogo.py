@@ -104,10 +104,11 @@ class Jogo:
         return mao
 
     def darCarta(self, jogador, quantidade):
-        jogador.receberCartas(quantidade, self.getMesa().getBaralho())
+        baralho = self.getMesa().getBaralho()
+        jogador.receberCartas(quantidade, baralho)
 
-        if self.getJogadorAtual().getDenunciavel():
-            self.getJogadorAtual().setDenunciavel(False)
+        if self.jogador.getDenunciavel():
+            self.jogador.setDenunciavel(False)
 
     def jogarCarta(self, index):
         valida = False
