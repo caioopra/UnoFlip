@@ -369,14 +369,14 @@ class ActorInterface(DogPlayerInterface):
             'roxo': 'dark_4',
             'ciano': 'dark_5'
         }
-
+        print(carta.frente.simbolo)
         if carta.frente.simbolo == 'mais_dois':
             carta.frente.id = cores_mais_dois[cor]
             self.jogo.getMesa().setUltimaCarta(carta)
         elif carta.frente.simbolo == 'compra_ate_vir':
             carta.frente.id = cores_compra_ate_vir[cor]
             self.jogo.getMesa().setUltimaCarta(carta)
-        elif carta.frente.simbolo == 'coringa':
+        elif carta.frente.simbolo == 'troca_cor':
             carta.frente.id = cores_coringa[cor]
             self.jogo.getMesa().setUltimaCarta(carta)
         ################
