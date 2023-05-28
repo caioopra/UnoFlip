@@ -20,13 +20,13 @@ class ActorInterface(DogPlayerInterface):
         self.slots_remote_right = []
         self.slots_remote_left = []
         self.inicio_mao = 0
+        self.mensagem = ''
         self.jogo = Jogo()
         self.loadCardImages()
         self.startMenu()
 
     def receive_move(self, a_move: dict) -> None:
         if a_move['tipo'] == 'init':
-            print("comecou")
             self.jogo.transform_dict_to_object(a_move)
             jogadores = self.jogo.getJogadores()
             for k,jogador in enumerate(jogadores):
@@ -36,7 +36,9 @@ class ActorInterface(DogPlayerInterface):
                     self.jogo.setLeftPosition(k-1)
             self.jogo.setJogadorAtual(self.jogo.getJogadores()[0])
             self.jogo.setProximoJogador(self.jogo.getJogadores()[1])
+            self.mensagem = self.jogo.getJogadores()[self.jogo.getLocalPosition()].getNome()
             self.start_table()
+
         elif a_move['tipo'] == 'comprar':
             self.jogo.comprarCarta()
             self.atualizarInterface()
@@ -85,7 +87,7 @@ class ActorInterface(DogPlayerInterface):
             self.dog_server_interface.send_move(dict_inicial)
 
             self.jogo.configurarJogadores()
-
+            self.mensagem = self.jogo.getJogadores()[self.jogo.getLocalPosition()].getNome()
             self.start_table()
             
 
@@ -107,8 +109,7 @@ class ActorInterface(DogPlayerInterface):
         self.setCanvas() 
         self.createMenuDesign()
         self.window.resizable(False, False)
-        # player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
-        player_name = 'joao'
+        player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
         self.dog_server_interface = DogActor()
         message = self.dog_server_interface.initialize(player_name,self)
         messagebox.showinfo(message=message)
@@ -141,6 +142,8 @@ class ActorInterface(DogPlayerInterface):
 
         button_card = self.canvas.create_image(500, 300, image=self.dict_of_cards['light_0'])
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
+
+        self.mesage_var = self.canvas.create_text(100,25, text=self.mensagem, fill='white', font=('serif',16,'bold'))
     
     def loadCardImages(self) -> None:
         for i in range(64):
@@ -403,7 +406,10 @@ class ActorInterface(DogPlayerInterface):
         self.setCanvas()
         self.createTableDesign()
         self.atualizarInterface()
-
+       
+    
+    def update_mesage(self):
+        self.canvas.itemconfig(self.mesage_var, text =self.mensagem)
 
     def atualizarInterface(self):
         self.delete_local()
@@ -414,6 +420,7 @@ class ActorInterface(DogPlayerInterface):
 
         self.addRemoteCardRight()
         self.addRemoteCardLeft()
+        self.update_mesage()
 
 
 window = Window()
