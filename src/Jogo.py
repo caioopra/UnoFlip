@@ -20,6 +20,7 @@ class Jogo:
         self.__right_position = 0
         self.__dict_jogada = {}
         self.__mesa = Mesa(Baralho())
+        self.__ordem = 1
 
     def getJogadores(self) -> list:
         return self.__jogadores
@@ -107,8 +108,8 @@ class Jogo:
         baralho = self.getMesa().getBaralho()
         jogador.receberCartas(quantidade, baralho)
 
-        if self.jogador.getDenunciavel():
-            self.jogador.setDenunciavel(False)
+        if jogador.getDenunciavel():
+            jogador.setDenunciavel(False)
 
     def jogarCarta(self, index):
         valida = False
@@ -182,21 +183,16 @@ class Jogo:
             if efeito == "mais_um":
                 self.darCarta(self.getProximoJogador(), 1)
             elif efeito == "inverter_ordem":
-                self.__jogadores = self.__jogadores[::-1]
-                
-                if self.getLocalPosition() == 0:
-                    self.__left_position, self.__right_position, self.__local_position = self.__right_position, self.__local_position, self.__left_position
-                elif self.getLocalPosition() == 1:
-                    self.__right_position, self.__left_position = self.__left_position, self.__right_position
-                elif self.getLocalPosition() == 2:
-                    self.__left_position, self.__right_position, self.__local_position = self.__local_position, self.__left_position, self.__right_position
-                    
-                self.setProximoJogador(self.getJogadores()[(self.getLocalPosition() + 1) % 3])
+                self.__ordem = -self.__ordem
+                for k, i in enumerate(self.__jogadores):
+                    if i.getId() == self.__jogador_atual.getId():
+                        self.__proximo_jogador = self.__jogadores[(k+self.__ordem)%3]
+                        break
 
             elif efeito == "pular_vez":
                 for k, jogador in enumerate(self.getJogadores()):
                     if jogador.getId() == self.getProximoJogador().getId():
-                        index = (k + 1) % 3
+                        index = (k + self.__ordem) % 3
                         self.setProximoJogador(self.getJogadores()[index])
                         break
             elif efeito == "girar":
@@ -210,7 +206,7 @@ class Jogo:
             elif efeito == "pular_todos":
                 for k, jogador in enumerate(self.__jogadores):
                     if jogador.getId() == self.getProximoJogador().getId():
-                        index = (k + 2) % 3
+                        index = (k + 2*self.__ordem) % 3
                         self.setProximoJogador(self.getJogadores()[index])
                         break
 
@@ -247,7 +243,7 @@ class Jogo:
 
         for k, jogador in enumerate(self.__jogadores):
             if jogador.getId() == self.getProximoJogador().getId():
-                index = (k + 1) % 3
+                index = (k + self.__ordem) % 3
                 self.setProximoJogador(self.__jogadores[index])
                 # for jogador in self.__jogadores: print("jogador: ", jogador.getId())
                 break

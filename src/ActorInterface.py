@@ -185,6 +185,12 @@ class ActorInterface(DogPlayerInterface):
             self.dog_server_interface.send_move(self.jogo.getDictJogada())
             self.atualizarInterface()
         else:
+            for jogador in self.jogo.getJogadores():
+                print('jogador',jogador.getId())
+
+
+
+            print(self.jogo.getJogadorAtual().getId())
             print('nao e sua vez')
 
     def mover_mao(self,direcao: int) -> None:
