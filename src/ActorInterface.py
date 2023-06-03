@@ -223,6 +223,7 @@ class ActorInterface(DogPlayerInterface):
                 self.dog_server_interface.send_move(self.jogo.getDictJogada())
                 self.atualizarInterface()
                 if self.jogo.getMesa().getUltimaCarta().getFrente().tipo == 'coringa':
+                    self.setMessage("Escolha uma cor")
                     self.escolherCor()
             
             if not self.jogo.getJogadorAtual().getMao():
@@ -412,7 +413,10 @@ class ActorInterface(DogPlayerInterface):
         self.setCanvas()
         self.createTableDesign()
         self.atualizarInterface()
-       
+    
+    def setMessage(self, message: str) -> None:
+        self.mensagem = message
+        self.canvas.itemconfig(self.mesage_var, text =self.mensagem)
     
     def update_mesage(self):
         self.canvas.itemconfig(self.mesage_var, text =self.mensagem)
@@ -424,8 +428,8 @@ class ActorInterface(DogPlayerInterface):
 
         self.addCard()
 
-        self.addRemoteCardRight()
         self.addRemoteCardLeft()
+        self.addRemoteCardRight()
         self.update_mesage()
 
 
