@@ -5,7 +5,6 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from dog.dog_interface import DogPlayerInterface
 from dog.dog_actor import DogActor
-from FaceCoringa import FaceCoringa
 from Jogo import Jogo
 
 from time import sleep
@@ -100,8 +99,8 @@ class ActorInterface(DogPlayerInterface):
     def createMenuDesign(self) -> None:
         self.background_img = PhotoImage(file = f"menu_images/background.png")
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
-        self.img0 = PhotoImage(file = f"menu_images/img0.png")
-        button_start = self.canvas.create_image(270, 360, image=self.img0)
+        self.button_menu = PhotoImage(file = f"menu_images/img0.png")
+        button_start = self.canvas.create_image(270, 360, image=self.button_menu)
         self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_match())
 
 
@@ -120,25 +119,24 @@ class ActorInterface(DogPlayerInterface):
         self.background_img = PhotoImage(file = f"table_images/background.png")
         background = self.canvas.create_image(0, 0, image=self.background_img,anchor="nw")
 
-        self.img0 = PhotoImage(file = f"table_images/ButtonUno.png")
-        button_start = self.canvas.create_image(640, 80, image=self.img0)
+        self.button_gritar_uno = PhotoImage(file = f"table_images/ButtonUno.png")
+        button_start = self.canvas.create_image(640, 80, image=self.button_gritar_uno)
         self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.gritarUno())
 
 
-        self.img1 = PhotoImage(file = f"table_images/Button(2).png")
-        button_passar_vez = self.canvas.create_image(800, 300, image=self.img1)
+        self.button_passar_vez = PhotoImage(file = f"table_images/Button(2).png")
+        button_passar_vez = self.canvas.create_image(800, 300, image=self.button_passar_vez)
         self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.passarVez())
         
 
-        self.img2 = PhotoImage(file = f"table_images/seta_esquerda.png")
-        button_passar_vez = self.canvas.create_image(340, 670, image=self.img2)
+        self.button_mover_mao_esq = PhotoImage(file = f"table_images/seta_esquerda.png")
+        button_passar_vez = self.canvas.create_image(340, 670, image=self.button_mover_mao_esq)
         self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.mover_mao(0))
 
 
-        self.img3 = PhotoImage(file = f"table_images/seta_direita.png")
-        button_passar_vez = self.canvas.create_image(940, 670, image=self.img3)
+        self.button_mover_mao_dir = PhotoImage(file = f"table_images/seta_direita.png")
+        button_passar_vez = self.canvas.create_image(940, 670, image=self.button_mover_mao_dir)
         self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x:self.mover_mao(1))
-
 
         button_card = self.canvas.create_image(500, 300, image=self.dict_of_cards['light_0'])
         self.canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
@@ -264,8 +262,6 @@ class ActorInterface(DogPlayerInterface):
                 identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].getVerso().getId()}_270'])
                 self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
 
-
-
     def addRemoteCardLeft(self) -> None:
         self.slots_remote_left = []
 
@@ -276,8 +272,6 @@ class ActorInterface(DogPlayerInterface):
             if i <len(self.slots_remote_left):
                 identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].getVerso().getId()}_90'])
                 self.slots_remote_left[i] = (identificator,self.slots_remote_left[i])
-
-
 
     def addCheap(self):
         try:
@@ -293,8 +287,6 @@ class ActorInterface(DogPlayerInterface):
     def delete_local(self) -> None:
         for k, _ in enumerate(self.slots_local):
             self.canvas.delete(self.slots_local[k][0])
-
-    
 
     def mostrarEndGame(self):
         indice_jogador = self.jogo.getLocalPosition()
@@ -433,5 +425,4 @@ class ActorInterface(DogPlayerInterface):
         self.update_mesage()
 
 
-window = Window()
-tela = ActorInterface(window)
+
