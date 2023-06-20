@@ -59,7 +59,6 @@ class Jogador:
     def verificarDenunciavel(self):
         if len(self.__mao) == 1: 
             self.__denunciavel = True
-            print("virou denunciavel")
 
     def to_json(self) -> dict:
         a = json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

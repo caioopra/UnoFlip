@@ -45,10 +45,10 @@ class ActorInterface(DogPlayerInterface):
         elif a_move['tipo'] == 'jogar':
             index = a_move['index']
             self.jogo.jogarCarta(index)
-            self.atualizarInterface()
             if not self.jogo.getJogadorAtual().getMao():
                 sleep(0.2)
                 self.mostrarEndGame()
+            self.atualizarInterface()
         
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
@@ -183,13 +183,7 @@ class ActorInterface(DogPlayerInterface):
             self.dog_server_interface.send_move(self.jogo.getDictJogada())
             self.atualizarInterface()
         else:
-            for jogador in self.jogo.getJogadores():
-                print('jogador',jogador.getId())
-
-
-
-            print(self.jogo.getJogadorAtual().getId())
-            print('nao e sua vez')
+            self.setMessage("Não é sua vez")
 
     def mover_mao(self,direcao: int) -> None:
         self.delete_local()
@@ -206,12 +200,15 @@ class ActorInterface(DogPlayerInterface):
 
     def passarVez(self):
         if self.jogo.verificarTurno(): 
-            
-            self.jogo.passarVez()
+            jogador_atual = self.jogo.getJogadorAtual()
+            if jogador_atual.getJogouCarta() or jogador_atual.getComprouCarta():
+                self.jogo.passarVez()
 
-            self.dog_server_interface.send_move(self.jogo.getDictJogada())
+                self.dog_server_interface.send_move(self.jogo.getDictJogada())
+            else:
+                self.setMessage("Precisa tentar jogar")
         else:
-            print('nao e sua vez')
+            self.setMessage("Não é sua vez")
 
     def jogarCarta(self,index) -> None:
         if self.jogo.verificarTurno():           
@@ -223,12 +220,15 @@ class ActorInterface(DogPlayerInterface):
                 if self.jogo.getMesa().getUltimaCarta().getFrente().tipo == 'coringa':
                     self.setMessage("Escolha uma cor")
                     self.escolherCor()
+                self.setMessage("Carta jogada")
+            else:
+                self.setMessage("Não pode jogar essa \ncarta ou já atuou")
             
             if not self.jogo.getJogadorAtual().getMao():
                 sleep(0.2)
                 self.mostrarEndGame()
         else:
-            print('nao e sua vez')
+            self.setMessage("Não é sua vez")
 
     def addCard(self) -> None:
         self.slots_local = []
@@ -371,6 +371,7 @@ class ActorInterface(DogPlayerInterface):
             'roxo': 'dark_4',
             'ciano': 'dark_5'
         }
+
         print(carta.getFrente().simbolo)
         if carta.getFrente().simbolo == 'mais_dois':
             carta.getFrente().id = cores_mais_dois[cor]

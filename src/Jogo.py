@@ -126,14 +126,14 @@ class Jogo:
         valida = self.verificarValida(index)
 
         if valida:
+            self.getJogadorAtual().setJogouCarta(True)
+            del self.getJogadorAtual().getMao()[index]
+            self.getMesa().setUltimaCarta(self.getJogadorAtual().getMao()[index])
+            self.aplicarEfeito(index)
             self.__dict_jogada = {}
             self.__dict_jogada["tipo"] = "jogar"
             self.__dict_jogada["index"] = index
             self.__dict_jogada["match_status"] = "progress"
-            self.getMesa().setUltimaCarta(self.getJogadorAtual().getMao()[index])
-            self.aplicarEfeito(index)
-            del self.getJogadorAtual().getMao()[index]
-            self.getJogadorAtual().setJogouCarta(True)
         else:
             print("nao pode jogar essa carta")
 
