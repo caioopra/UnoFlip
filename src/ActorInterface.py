@@ -47,11 +47,14 @@ class ActorInterface(DogPlayerInterface):
             self.jogo.jogarCarta(index)
             if not self.jogo.getJogadorAtual().getMao():
                 sleep(0.2)
+                self.jogo.setFimJogo(True)
                 self.mostrarEndGame()
             self.atualizarInterface()
         
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
+            if self.jogo.getJogadorAtual() is self.jogo.getJogadores()[self.jogo.getLocalPosition()]:
+                self.setMessage("Seu turno!")
         
         elif a_move['tipo'] == 'muda_cor':
             self.mudaCor(a_move['cor'])
@@ -71,7 +74,7 @@ class ActorInterface(DogPlayerInterface):
         self.jogo.setLocalId(start_status.get_local_id())
 
     def receive_withdrawal_notification(self) -> None:
-        pass
+        self.mostrarTelaDesconexao()
 
     def start_match(self) -> None:        
         start_status = self.dog_server_interface.start_match(3)
@@ -205,6 +208,8 @@ class ActorInterface(DogPlayerInterface):
                 self.jogo.passarVez()
 
                 self.dog_server_interface.send_move(self.jogo.getDictJogada())
+                
+                self.setMessage("Turno passado!")
             else:
                 self.setMessage("Precisa tentar jogar")
         else:
@@ -226,6 +231,7 @@ class ActorInterface(DogPlayerInterface):
             
             if not self.jogo.getJogadorAtual().getMao():
                 sleep(0.2)
+                self.jogo.setFimJogo(True)
                 self.mostrarEndGame()
         else:
             self.setMessage("Não é sua vez")
@@ -294,8 +300,14 @@ class ActorInterface(DogPlayerInterface):
         if len(self.jogo.getJogadores()[indice_jogador].getMao()):
             imagem = 'perdeu'
         else:
-            imagem = 'venceu'
+            imagem = 'venceu'    
+        
         self.background_img = PhotoImage(file = f"menu_images/{imagem}.png")
+        background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
+        
+    def mostrarTelaDesconexao(self):
+        self.setCanvas()
+        self.background_img = PhotoImage(file = f"menu_images/desconexao.png")
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
     
 
@@ -424,6 +436,3 @@ class ActorInterface(DogPlayerInterface):
         self.addRemoteCardLeft()
         self.addRemoteCardRight()
         self.update_mesage()
-
-
-

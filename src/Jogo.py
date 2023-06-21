@@ -19,6 +19,8 @@ class Jogo:
         self.__dict_jogada = {}
         self.__mesa = Mesa(Baralho())
         self.__ordem = 1
+        self.__fim_jogo = False
+        self.__jogo_abandonado = False
 
     def getJogadores(self) -> list:
         return self.__jogadores
@@ -73,6 +75,18 @@ class Jogo:
 
     def getMesa(self) -> Mesa:
         return self.__mesa
+    
+    def getFimJogo(self) -> bool:
+        return self.__fim_jogo
+    
+    def setFimJogo(self, state: bool) -> None:
+        self.__fim_jogo = state
+        
+    def getJogoAbandonado(self) -> bool:
+        return self.__jogo_abandonado
+    
+    def setJogoAbandonado(self, state: bool) -> None:
+        self.__jogo_abandonado = state
 
     def comecarPartida(self, jogadores: list, id_jogador_local: int):
         self.setLocalId(id_jogador_local)
@@ -127,9 +141,9 @@ class Jogo:
 
         if valida:
             self.getJogadorAtual().setJogouCarta(True)
-            del self.getJogadorAtual().getMao()[index]
             self.getMesa().setUltimaCarta(self.getJogadorAtual().getMao()[index])
             self.aplicarEfeito(index)
+            del self.getJogadorAtual().getMao()[index]
             self.__dict_jogada = {}
             self.__dict_jogada["tipo"] = "jogar"
             self.__dict_jogada["index"] = index
@@ -200,6 +214,7 @@ class Jogo:
                         self.setProximoJogador(self.getJogadores()[index])
                         break
             elif efeito == "girar":
+                print("girando")
                 for carta in self.getMesa().getBaralho().getCartas():
                     carta.flip()
                 for jogador in self.__jogadores:
