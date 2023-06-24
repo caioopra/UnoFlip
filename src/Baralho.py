@@ -62,10 +62,9 @@ class Baralho():
                 aux2.append(face_coringa2)
 
             face_mais_dois = Face(f'light_6',cores[i],'mais_dois','coringa')
-            face_compra_ate_vir = Face(f'dark_6',cores2[i],'compra_ate_vir','coringa')
             for _ in range(2):
                 aux.append(face_mais_dois)
-                aux2.append(face_compra_ate_vir)
+                aux2.append(face_coringa2)
             
         
             for _ in range(10):

@@ -13,7 +13,7 @@ from time import sleep
 class ActorInterface(DogPlayerInterface):
 
     def __init__(self,window: Window) -> None:
-        self.window = window.get_window()
+        self.window = window.getWindow()
         self.dict_of_cards = {}
         self.slots_local = []
         self.slots_remote_right = []
@@ -59,15 +59,11 @@ class ActorInterface(DogPlayerInterface):
         elif a_move['tipo'] == 'muda_cor':
             self.mudaCor(a_move['cor'])
 
-            carta = self.jogo.getMesa().getUltimaCarta()
-            if carta.getFrente().simbolo == 'compra_ate_vir':
-                self.jogo.compraAteVir(a_move["cor"])
-
             self.atualizarInterface()
 
         elif a_move['tipo'] == 'uno':
             self.jogo.getJogadorAtual().gritarUno()
-            self.jogo.verificar_UNO()
+            self.jogo.verificarUNO()
             self.atualizarInterface()
 
     def receive_start(self, start_status) -> None:
@@ -175,7 +171,7 @@ class ActorInterface(DogPlayerInterface):
 
     def gritarUno(self):
         self.jogo.getJogadorAtual().gritarUno()
-        self.jogo.verificar_UNO()
+        self.jogo.verificarUNO()
         self.atualizarInterface()
         self.dog_server_interface.send_move(self.jogo.getDictJogada())
 
@@ -217,17 +213,20 @@ class ActorInterface(DogPlayerInterface):
 
     def jogarCarta(self,index) -> None:
         if self.jogo.verificarTurno():           
-   
+
             valida = self.jogo.jogarCarta(self.inicio_mao+index)
             if valida:
                 self.dog_server_interface.send_move(self.jogo.getDictJogada())
                 self.atualizarInterface()
-                if self.jogo.getMesa().getUltimaCarta().getFrente().tipo == 'coringa':
+                
+                frente_ultima_carta = self.jogo.getMesa().getUltimaCarta().getFrente()
+                if frente_ultima_carta.getTipo() == 'coringa':
                     self.setMessage("Escolha uma cor")
                     self.escolherCor()
+
                 self.setMessage("Carta jogada")
             else:
-                self.setMessage("Não pode jogar essa \ncarta ou já atuou")
+                self.setMessage("Não pode jogar essa\ncarta ou já atuou")
             
             if not self.jogo.getJogadorAtual().getMao():
                 sleep(0.2)
@@ -306,14 +305,17 @@ class ActorInterface(DogPlayerInterface):
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
         
     def mostrarTelaDesconexao(self):
+        self.jogo.setFimJogo(True)
+        self.jogo.setJogoAbandonado(True)
         self.setCanvas()
         self.background_img = PhotoImage(file = f"menu_images/desconexao.png")
         background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
+        sleep(3)
+        self.window.destroy()
     
-
     def escolherCor(self):
         carta = self.jogo.getMesa().getUltimaCarta()
-        cor = carta.getFrente().id[0]
+        cor = carta.getFrente().getId()[0]
         
         if cor == "l":
             retangulo = 'Rectangle_light'
@@ -358,19 +360,13 @@ class ActorInterface(DogPlayerInterface):
 
     def mudaCor(self, cor: str):
         carta = self.jogo.getMesa().getUltimaCarta()
-        carta.getFrente().cor = cor
+        carta.getFrente().setCor(cor)
  
         cores_mais_dois = {
             'amarelo': 'light_7',
             'vermelho': 'light_8',
             'azul': 'light_9',
             'verde': 'light_10'
-        }
-        cores_compra_ate_vir= {
-            'laranja': 'dark_7',
-            'rosa': 'dark_8',
-            'roxo': 'dark_9',
-            'ciano': 'dark_10'
         }
 
         cores_coringa = {
@@ -384,15 +380,12 @@ class ActorInterface(DogPlayerInterface):
             'ciano': 'dark_5'
         }
 
-        print(carta.getFrente().simbolo)
-        if carta.getFrente().simbolo == 'mais_dois':
-            carta.getFrente().id = cores_mais_dois[cor]
+        print(carta.getFrente().getSimbolo())
+        if carta.getFrente().getSimbolo() == 'mais_dois':
+            carta.getFrente().setId(cores_mais_dois[cor])
             self.jogo.getMesa().setUltimaCarta(carta)
-        elif carta.getFrente().simbolo == 'compra_ate_vir':
-            carta.getFrente().id = cores_compra_ate_vir[cor]
-            self.jogo.getMesa().setUltimaCarta(carta)
-        elif carta.getFrente().simbolo == 'troca_cor':
-            carta.getFrente().id = cores_coringa[cor]
+        elif carta.getFrente().getSimbolo() == 'troca_cor':
+            carta.getFrente().setId(cores_coringa[cor])
             self.jogo.getMesa().setUltimaCarta(carta)
         ################
         # ficar no Actor
