@@ -96,7 +96,7 @@ class Jogo:
 
     def criar_jogadores(self, jogadores):
         for i, jogador in enumerate(jogadores):
-            mao = self.dar_cartas_iniciais()
+            mao = self.darCartasIniciais()
             self.__jogadores[i] = Jogador(id=jogador[1], nome=jogador[0], mao=mao)
 
     def configurarJogadores(self):
@@ -109,7 +109,7 @@ class Jogo:
         self.setJogadorAtual(self.getJogadores()[0])
         self.setProximoJogador(self.getJogadores()[1])
 
-    def dar_cartas_iniciais(self) -> list:
+    def darCartasIniciais(self) -> list:
         mao = []
         for _ in range(1):
             carta = self.getMesa().getBaralho().getCartas().pop()
