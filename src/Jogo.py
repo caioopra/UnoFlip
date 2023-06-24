@@ -28,7 +28,7 @@ class Jogo:
     def getStatus(self) -> int:
         return self.__status
 
-    def getJogadorAtual(self) -> int:
+    def getJogadorAtual(self) -> Jogador:
         return self.__jogador_atual
 
     def getLocalId(self) -> str:

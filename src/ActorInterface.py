@@ -49,6 +49,8 @@ class ActorInterface(DogPlayerInterface):
                 sleep(0.2)
                 self.jogo.setFimJogo(True)
                 self.mostrarEndGame()
+            for i in range(self.jogo.getJogadorAtual().getMao()):
+                print(i.getVerso().getSimbolo())
             self.atualizarInterface()
         
         elif a_move['tipo'] == 'passar':
