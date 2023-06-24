@@ -45,13 +45,12 @@ class ActorInterface(DogPlayerInterface):
         elif a_move['tipo'] == 'jogar':
             index = a_move['index']
             self.jogo.jogarCarta(index)
+            self.atualizarInterface()
             if not self.jogo.getJogadorAtual().getMao():
                 sleep(0.2)
                 self.jogo.setFimJogo(True)
                 self.mostrarEndGame()
-            for i in self.jogo.getJogadorAtual().getMao():
-                print(i.getVerso().getSimbolo())
-            self.atualizarInterface()
+
         
         elif a_move['tipo'] == 'passar':
             self.jogo.passarVez()
@@ -296,12 +295,12 @@ class ActorInterface(DogPlayerInterface):
             self.canvas.delete(self.slots_local[k][0])
             
     def delete_right(self) -> None:
-        for k, _ in enumerate(self.slots_right):
-            self.canvas.delete(self.slots_right[k][0])
+        for k, _ in enumerate(self.slots_remote_right):
+            self.canvas.delete(self.slots_remote_right[k][0])
 
     def delete_left(self) -> None:
-        for k, _ in enumerate(self.slots_left):
-            self.canvas.delete(self.slots_left[k][0])
+        for k, _ in enumerate(self.slots_remote_left):
+            self.canvas.delete(self.slots_remote_left[k][0])
 
 
 
