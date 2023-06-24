@@ -111,7 +111,7 @@ class Jogo:
 
     def dar_cartas_iniciais(self) -> list:
         mao = []
-        for _ in range(7):
+        for _ in range(1):
             carta = self.getMesa().getBaralho().getCartas().pop()
             mao.append(carta)
         return mao
