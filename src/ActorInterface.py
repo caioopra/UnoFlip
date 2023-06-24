@@ -49,7 +49,7 @@ class ActorInterface(DogPlayerInterface):
                 sleep(0.2)
                 self.jogo.setFimJogo(True)
                 self.mostrarEndGame()
-            for i in range(self.jogo.getJogadorAtual().getMao()):
+            for i in self.jogo.getJogadorAtual().getMao():
                 print(i.getVerso().getSimbolo())
             self.atualizarInterface()
         
@@ -294,6 +294,16 @@ class ActorInterface(DogPlayerInterface):
     def delete_local(self) -> None:
         for k, _ in enumerate(self.slots_local):
             self.canvas.delete(self.slots_local[k][0])
+            
+    def delete_right(self) -> None:
+        for k, _ in enumerate(self.slots_right):
+            self.canvas.delete(self.slots_right[k][0])
+
+    def delete_left(self) -> None:
+        for k, _ in enumerate(self.slots_left):
+            self.canvas.delete(self.slots_left[k][0])
+
+
 
     def mostrarEndGame(self):
         indice_jogador = self.jogo.getLocalPosition()
@@ -423,7 +433,8 @@ class ActorInterface(DogPlayerInterface):
 
     def atualizarInterface(self):
         self.delete_local()
-
+        self.delete_left()
+        self.delete_right()
         self.addCheap()
 
         self.addCard()
