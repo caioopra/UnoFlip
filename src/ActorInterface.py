@@ -65,6 +65,7 @@ class ActorInterface(DogPlayerInterface):
         elif a_move['tipo'] == 'uno':
             self.__jogo.getJogadorAtual().gritarUno()
             self.__jogo.verificarUNO()
+            self.setMessage(f"{self.__jogo.getJogadorAtual().getNome()} gritou UNO")
             self.atualizarInterface()
 
     def receive_start(self, start_status) -> None:
@@ -141,7 +142,7 @@ class ActorInterface(DogPlayerInterface):
         button_card = self.__canvas.create_image(500, 300, image=self.__dict_of_cards['light_0'])
         self.__canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
 
-        self.mesage_var = self.__canvas.create_text(100,25, text=self.__mensagem, fill='white', font=('serif',16,'bold'))
+        self.__mesage_var = self.__canvas.create_text(150,25, text=self.__mensagem, fill='white', font=('serif',16,'bold'))
     
     def loadCardImages(self) -> None:
         for i in range(64):
@@ -174,6 +175,7 @@ class ActorInterface(DogPlayerInterface):
         self.__jogo.getJogadorAtual().gritarUno()
         self.__jogo.verificarUNO()
         self.atualizarInterface()
+        self.setMessage("Gritou UNO")
         self.__dog_server_interface.send_move(self.__jogo.getDictJogada())
 
 
@@ -425,10 +427,10 @@ class ActorInterface(DogPlayerInterface):
     
     def setMessage(self, message: str) -> None:
         self.__mensagem = message
-        self.__canvas.itemconfig(self.mesage_var, text =self.__mensagem)
+        self.__canvas.itemconfig(self.__mesage_var, text =self.__mensagem)
     
     def update_mesage(self):
-        self.__canvas.itemconfig(self.mesage_var, text =self.__mensagem)
+        self.__canvas.itemconfig(self.__mesage_var, text =self.__mensagem)
 
     def atualizarInterface(self):
         self.delete_local()

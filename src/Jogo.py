@@ -43,9 +43,6 @@ class Jogo:
     def setJogadorAtual(self, jogador: int) -> None:
         self.__jogador_atual = jogador
 
-    def getJogadorAtual(self) -> int:
-        return self.__jogador_atual
-
     def getProximoJogador(self) -> int:
         return self.__proximo_jogador
 
