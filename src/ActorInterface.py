@@ -13,48 +13,48 @@ from time import sleep
 class ActorInterface(DogPlayerInterface):
 
     def __init__(self,window: Window) -> None:
-        self.window = window.getWindow()
-        self.dict_of_cards = {}
-        self.slots_local = []
-        self.slots_remote_right = []
-        self.slots_remote_left = []
-        self.inicio_mao = 0
-        self.mensagem = ''
-        self.jogo = Jogo()
+        self.__window = window.getWindow()
+        self.__dict_of_cards = {}
+        self.__slots_local = []
+        self.__slots_remote_right = []
+        self.__slots_remote_left = []
+        self.__inicio_mao = 0
+        self.__mensagem = ''
+        self.__jogo = Jogo()
         self.loadCardImages()
         self.startMenu()
 
     def receive_move(self, a_move: dict) -> None:
         if a_move['tipo'] == 'init':
-            self.jogo.transform_dict_to_object(a_move)
-            jogadores = self.jogo.getJogadores()
+            self.__jogo.transform_dict_to_object(a_move)
+            jogadores = self.__jogo.getJogadores()
             for k,jogador in enumerate(jogadores):
-                if jogador.getId() ==self.jogo.getLocalId():
-                    self.jogo.setLocalPosition(k)
-                    self.jogo.setRightPosition((k+1)%3) 
-                    self.jogo.setLeftPosition(k-1)
-            self.jogo.setJogadorAtual(self.jogo.getJogadores()[0])
-            self.jogo.setProximoJogador(self.jogo.getJogadores()[1])
-            self.mensagem = self.jogo.getJogadores()[self.jogo.getLocalPosition()].getNome()
+                if jogador.getId() ==self.__jogo.getLocalId():
+                    self.__jogo.setLocalPosition(k)
+                    self.__jogo.setRightPosition((k+1)%3) 
+                    self.__jogo.setLeftPosition(k-1)
+            self.__jogo.setJogadorAtual(self.__jogo.getJogadores()[0])
+            self.__jogo.setProximoJogador(self.__jogo.getJogadores()[1])
+            self.__mensagem = self.__jogo.getJogadores()[self.__jogo.getLocalPosition()].getNome()
             self.start_table()
 
         elif a_move['tipo'] == 'comprar':
-            self.jogo.comprarCarta()
+            self.__jogo.comprarCarta()
             self.atualizarInterface()
             
         elif a_move['tipo'] == 'jogar':
             index = a_move['index']
-            self.jogo.jogarCarta(index)
+            self.__jogo.jogarCarta(index)
             self.atualizarInterface()
-            if not self.jogo.getJogadorAtual().getMao():
+            if not self.__jogo.getJogadorAtual().getMao():
                 sleep(0.2)
-                self.jogo.setFimJogo(True)
+                self.__jogo.setFimJogo(True)
                 self.mostrarEndGame()
 
         
         elif a_move['tipo'] == 'passar':
-            self.jogo.passarVez()
-            if self.jogo.getJogadorAtual() is self.jogo.getJogadores()[self.jogo.getLocalPosition()]:
+            self.__jogo.passarVez()
+            if self.__jogo.getJogadorAtual() is self.__jogo.getJogadores()[self.__jogo.getLocalPosition()]:
                 self.setMessage("Seu turno!")
         
         elif a_move['tipo'] == 'muda_cor':
@@ -63,18 +63,18 @@ class ActorInterface(DogPlayerInterface):
             self.atualizarInterface()
 
         elif a_move['tipo'] == 'uno':
-            self.jogo.getJogadorAtual().gritarUno()
-            self.jogo.verificarUNO()
+            self.__jogo.getJogadorAtual().gritarUno()
+            self.__jogo.verificarUNO()
             self.atualizarInterface()
 
     def receive_start(self, start_status) -> None:
-        self.jogo.setLocalId(start_status.get_local_id())
+        self.__jogo.setLocalId(start_status.get_local_id())
 
     def receive_withdrawal_notification(self) -> None:
         self.mostrarTelaDesconexao()
 
     def start_match(self) -> None:        
-        start_status = self.dog_server_interface.start_match(3)
+        start_status = self.__dog_server_interface.start_match(3)
         message = start_status.get_message()
         messagebox.showinfo(message=message)
 
@@ -82,105 +82,105 @@ class ActorInterface(DogPlayerInterface):
             jogadores = start_status.get_players()
             id_jogador_local = start_status.get_local_id()
             
-            dict_inicial = self.jogo.comecarPartida(jogadores, id_jogador_local)
-            self.dog_server_interface.send_move(dict_inicial)
+            dict_inicial = self.__jogo.comecarPartida(jogadores, id_jogador_local)
+            self.__dog_server_interface.send_move(dict_inicial)
 
-            self.jogo.configurarJogadores()
-            self.mensagem = self.jogo.getJogadores()[self.jogo.getLocalPosition()].getNome()
+            self.__jogo.configurarJogadores()
+            self.__mensagem = self.__jogo.getJogadores()[self.__jogo.getLocalPosition()].getNome()
             self.start_table()
             
 
     def setCanvas(self) -> None:
-        self.canvas = Canvas(
-            self.window,bg = "#ffffff",height = 720,width = 1280,bd = 0,highlightthickness = 0,relief = "ridge")
-        self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
+        self.__canvas = Canvas(
+            self.__window,bg = "#ffffff",height = 720,width = 1280,bd = 0,highlightthickness = 0,relief = "ridge")
+        self.__canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 
     def createMenuDesign(self) -> None:
-        self.background_img = PhotoImage(file = f"menu_images/background.png")
-        background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
-        self.button_menu = PhotoImage(file = f"menu_images/img0.png")
-        button_start = self.canvas.create_image(270, 360, image=self.button_menu)
-        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_match())
+        self.__background_img = PhotoImage(file = f"menu_images/background.png")
+        background = self.__canvas.create_image(0, 0,image=self.__background_img,anchor="nw")
+        self.__button_menu = PhotoImage(file = f"menu_images/img0.png")
+        button_start = self.__canvas.create_image(270, 360, image=self.__button_menu)
+        self.__canvas.tag_bind(button_start, "<Button-1>", lambda x: self.start_match())
 
 
     def startMenu(self) -> None:
         self.setCanvas() 
         self.createMenuDesign()
-        self.window.resizable(False, False)
+        self.__window.resizable(False, False)
         player_name = simpledialog.askstring(title='player indentification', prompt= 'Qual seu nome?')
-        self.dog_server_interface = DogActor()
-        message = self.dog_server_interface.initialize(player_name,self)
+        self.__dog_server_interface = DogActor()
+        message = self.__dog_server_interface.initialize(player_name,self)
         messagebox.showinfo(message=message)
-        self.window.mainloop()
+        self.__window.mainloop()
 
 
     def createTableDesign(self) -> None:
-        self.background_img = PhotoImage(file = f"table_images/background.png")
-        background = self.canvas.create_image(0, 0, image=self.background_img,anchor="nw")
+        self.__background_img = PhotoImage(file = f"table_images/background.png")
+        background = self.__canvas.create_image(0, 0, image=self.__background_img,anchor="nw")
 
-        self.button_gritar_uno = PhotoImage(file = f"table_images/ButtonUno.png")
-        button_start = self.canvas.create_image(640, 80, image=self.button_gritar_uno)
-        self.canvas.tag_bind(button_start, "<Button-1>", lambda x: self.gritarUno())
+        self.__button_gritar_uno = PhotoImage(file = f"table_images/ButtonUno.png")
+        button_start = self.__canvas.create_image(640, 80, image=self.__button_gritar_uno)
+        self.__canvas.tag_bind(button_start, "<Button-1>", lambda x: self.gritarUno())
 
 
-        self.button_passar_vez = PhotoImage(file = f"table_images/Button(2).png")
-        button_passar_vez = self.canvas.create_image(800, 300, image=self.button_passar_vez)
-        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.passarVez())
+        self.__button_passar_vez = PhotoImage(file = f"table_images/Button(2).png")
+        button_passar_vez = self.__canvas.create_image(800, 300, image=self.__button_passar_vez)
+        self.__canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.passarVez())
         
 
-        self.button_mover_mao_esq = PhotoImage(file = f"table_images/seta_esquerda.png")
-        button_passar_vez = self.canvas.create_image(340, 670, image=self.button_mover_mao_esq)
-        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.mover_mao(0))
+        self.__button_mover_mao_esq = PhotoImage(file = f"table_images/seta_esquerda.png")
+        button_passar_vez = self.__canvas.create_image(340, 670, image=self.__button_mover_mao_esq)
+        self.__canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x: self.mover_mao(0))
 
 
-        self.button_mover_mao_dir = PhotoImage(file = f"table_images/seta_direita.png")
-        button_passar_vez = self.canvas.create_image(940, 670, image=self.button_mover_mao_dir)
-        self.canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x:self.mover_mao(1))
+        self.__button_mover_mao_dir = PhotoImage(file = f"table_images/seta_direita.png")
+        button_passar_vez = self.__canvas.create_image(940, 670, image=self.__button_mover_mao_dir)
+        self.__canvas.tag_bind(button_passar_vez, "<Button-1>", lambda x:self.mover_mao(1))
 
-        button_card = self.canvas.create_image(500, 300, image=self.dict_of_cards['light_0'])
-        self.canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
+        button_card = self.__canvas.create_image(500, 300, image=self.__dict_of_cards['light_0'])
+        self.__canvas.tag_bind(button_card, "<Button-1>", lambda x: self.comprar())
 
-        self.mesage_var = self.canvas.create_text(100,25, text=self.mensagem, fill='white', font=('serif',16,'bold'))
+        self.mesage_var = self.__canvas.create_text(100,25, text=self.__mensagem, fill='white', font=('serif',16,'bold'))
     
     def loadCardImages(self) -> None:
         for i in range(64):
             image=Image.open(f'UNO_cards_light/light_{i}.png')
             img=image.resize((100, 150))
-            self.dict_of_cards[f"light_{i}"] = ImageTk.PhotoImage(img)
+            self.__dict_of_cards[f"light_{i}"] = ImageTk.PhotoImage(img)
 
             image=Image.open(f'UNO_cards_light/light_{i}.png')
             img=image.resize((80, 130))
-            self.dict_of_cards[f"light_{i}_90"] = ImageTk.PhotoImage(img.rotate(90, expand=True))
+            self.__dict_of_cards[f"light_{i}_90"] = ImageTk.PhotoImage(img.rotate(90, expand=True))
 
             image=Image.open(f'UNO_cards_light/light_{i}.png')
             img=image.resize((80, 130))
-            self.dict_of_cards[f"light_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
+            self.__dict_of_cards[f"light_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
 
             image=Image.open(f'UNO_cards_dark/dark_{i}.png')
             img=image.resize((100, 150))
-            self.dict_of_cards[f"dark_{i}"] = ImageTk.PhotoImage(img)
+            self.__dict_of_cards[f"dark_{i}"] = ImageTk.PhotoImage(img)
 
             image=Image.open(f'UNO_cards_dark/dark_{i}.png')
             img=image.resize((80, 130))
-            self.dict_of_cards[f"dark_{i}_90"] = ImageTk.PhotoImage(img.rotate(90, expand=True))
+            self.__dict_of_cards[f"dark_{i}_90"] = ImageTk.PhotoImage(img.rotate(90, expand=True))
 
             image=Image.open(f'UNO_cards_dark/dark_{i}.png')
             img=image.resize((80, 130))
-            self.dict_of_cards[f"dark_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
+            self.__dict_of_cards[f"dark_{i}_270"] = ImageTk.PhotoImage(img.rotate(270, expand=True))
 
 
     def gritarUno(self):
-        self.jogo.getJogadorAtual().gritarUno()
-        self.jogo.verificarUNO()
+        self.__jogo.getJogadorAtual().gritarUno()
+        self.__jogo.verificarUNO()
         self.atualizarInterface()
-        self.dog_server_interface.send_move(self.jogo.getDictJogada())
+        self.__dog_server_interface.send_move(self.__jogo.getDictJogada())
 
 
     def comprar(self) -> None:
-        if self.jogo.verificarTurno():
-            self.jogo.comprarCarta()#
-            self.dog_server_interface.send_move(self.jogo.getDictJogada())
+        if self.__jogo.verificarTurno():
+            self.__jogo.comprarCarta()#
+            self.__dog_server_interface.send_move(self.__jogo.getDictJogada())
             self.atualizarInterface()
         else:
             self.setMessage("Não é sua vez")
@@ -189,22 +189,22 @@ class ActorInterface(DogPlayerInterface):
         self.delete_local()
         
         if direcao ==1:
-            if self.inicio_mao+6<len(self.jogo.getJogadores()[self.jogo.getLocalPosition()].getMao()):
-                self.inicio_mao +=1
+            if self.__inicio_mao+6<len(self.__jogo.getJogadores()[self.__jogo.getLocalPosition()].getMao()):
+                self.__inicio_mao +=1
 
         if direcao ==0:
-            if self.inicio_mao > 0:
-                self.inicio_mao -=1
+            if self.__inicio_mao > 0:
+                self.__inicio_mao -=1
        
         self.atualizarInterface()
 
     def passarVez(self):
-        if self.jogo.verificarTurno(): 
-            jogador_atual = self.jogo.getJogadorAtual()
+        if self.__jogo.verificarTurno(): 
+            jogador_atual = self.__jogo.getJogadorAtual()
             if jogador_atual.getJogouCarta() or jogador_atual.getComprouCarta():
-                self.jogo.passarVez()
+                self.__jogo.passarVez()
 
-                self.dog_server_interface.send_move(self.jogo.getDictJogada())
+                self.__dog_server_interface.send_move(self.__jogo.getDictJogada())
                 
                 self.setMessage("Turno passado!")
             else:
@@ -213,14 +213,14 @@ class ActorInterface(DogPlayerInterface):
             self.setMessage("Não é sua vez")
 
     def jogarCarta(self,index) -> None:
-        if self.jogo.verificarTurno():           
+        if self.__jogo.verificarTurno():           
 
-            valida = self.jogo.jogarCarta(self.inicio_mao+index)
+            valida = self.__jogo.jogarCarta(self.__inicio_mao+index)
             if valida:
-                self.dog_server_interface.send_move(self.jogo.getDictJogada())
+                self.__dog_server_interface.send_move(self.__jogo.getDictJogada())
                 self.atualizarInterface()
                 
-                frente_ultima_carta = self.jogo.getMesa().getUltimaCarta().getFrente()
+                frente_ultima_carta = self.__jogo.getMesa().getUltimaCarta().getFrente()
                 if frente_ultima_carta.getTipo() == 'coringa':
                     self.setMessage("Escolha uma cor")
                     self.escolherCor()
@@ -229,15 +229,15 @@ class ActorInterface(DogPlayerInterface):
             else:
                 self.setMessage("Não pode jogar essa\ncarta ou já atuou")
             
-            if not self.jogo.getJogadorAtual().getMao():
+            if not self.__jogo.getJogadorAtual().getMao():
                 sleep(0.2)
-                self.jogo.setFimJogo(True)
+                self.__jogo.setFimJogo(True)
                 self.mostrarEndGame()
         else:
             self.setMessage("Não é sua vez")
 
     def addCard(self) -> None:
-        self.slots_local = []
+        self.__slots_local = []
 
         
         func0 = lambda x: self.jogarCarta(0)
@@ -250,82 +250,82 @@ class ActorInterface(DogPlayerInterface):
         
 
         for i in range(6):
-            if (i+self.inicio_mao) < len(self.jogo.getJogadores()[self.jogo.getLocalPosition()].getMao()):
-                self.slots_local.append(self.jogo.getJogadores()[self.jogo.getLocalPosition()].getMao()[i+self.inicio_mao])
-            if i < len(self.slots_local):
-                button_card = self.canvas.create_image(340+i*120, 570, image=self.dict_of_cards[self.slots_local[i].getFrente().getId()])
-                self.slots_local[i] = (button_card,self.slots_local[i])
-                self.canvas.tag_bind(button_card, "<Button-1>", funcs[i])
+            if (i+self.__inicio_mao) < len(self.__jogo.getJogadores()[self.__jogo.getLocalPosition()].getMao()):
+                self.__slots_local.append(self.__jogo.getJogadores()[self.__jogo.getLocalPosition()].getMao()[i+self.__inicio_mao])
+            if i < len(self.__slots_local):
+                button_card = self.__canvas.create_image(340+i*120, 570, image=self.__dict_of_cards[self.__slots_local[i].getFrente().getId()])
+                self.__slots_local[i] = (button_card,self.__slots_local[i])
+                self.__canvas.tag_bind(button_card, "<Button-1>", funcs[i])
             
     def addRemoteCardRight(self) -> None:
-        self.slots_remote_right = []
+        self.__slots_remote_right = []
 
         for i in range(5):
-            if i < len(self.jogo.getJogadores()[self.jogo.getRightPosition()].getMao()):
-                self.slots_remote_right.append(self.jogo.getJogadores()[self.jogo.getRightPosition()].getMao()[i])
+            if i < len(self.__jogo.getJogadores()[self.__jogo.getRightPosition()].getMao()):
+                self.__slots_remote_right.append(self.__jogo.getJogadores()[self.__jogo.getRightPosition()].getMao()[i])
 
-            if i <len(self.slots_remote_right):
-                identificator = self.canvas.create_image(1140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_right[i].getVerso().getId()}_270'])
-                self.slots_remote_right[i] = (identificator,self.slots_remote_right[i])
+            if i <len(self.__slots_remote_right):
+                identificator = self.__canvas.create_image(1140, 150+(105*i), image=self.__dict_of_cards[f'{self.__slots_remote_right[i].getVerso().getId()}_270'])
+                self.__slots_remote_right[i] = (identificator,self.__slots_remote_right[i])
 
     def addRemoteCardLeft(self) -> None:
-        self.slots_remote_left = []
+        self.__slots_remote_left = []
 
         for i in range(5):
-            if i < len(self.jogo.getJogadores()[self.jogo.getLeftPosition()].getMao()):
-                self.slots_remote_left.append(self.jogo.getJogadores()[self.jogo.getLeftPosition()].getMao()[i])
+            if i < len(self.__jogo.getJogadores()[self.__jogo.getLeftPosition()].getMao()):
+                self.__slots_remote_left.append(self.__jogo.getJogadores()[self.__jogo.getLeftPosition()].getMao()[i])
 
-            if i <len(self.slots_remote_left):
-                identificator = self.canvas.create_image(140, 150+(105*i), image=self.dict_of_cards[f'{self.slots_remote_left[i].getVerso().getId()}_90'])
-                self.slots_remote_left[i] = (identificator,self.slots_remote_left[i])
+            if i <len(self.__slots_remote_left):
+                identificator = self.__canvas.create_image(140, 150+(105*i), image=self.__dict_of_cards[f'{self.__slots_remote_left[i].getVerso().getId()}_90'])
+                self.__slots_remote_left[i] = (identificator,self.__slots_remote_left[i])
 
     def addCheap(self):
         try:
-            self.canvas.delete(self.button_cheap)
+            self.__canvas.delete(self.__button_cheap)
         except:
             pass
 
-        carta = self.jogo.getMesa().getUltimaCarta()
+        carta = self.__jogo.getMesa().getUltimaCarta()
 
-        self.button_cheap = self.canvas.create_image(640, 300, image=self.dict_of_cards[carta.getFrente().getId()])
+        self.__button_cheap = self.__canvas.create_image(640, 300, image=self.__dict_of_cards[carta.getFrente().getId()])
 
 
     def delete_local(self) -> None:
-        for k, _ in enumerate(self.slots_local):
-            self.canvas.delete(self.slots_local[k][0])
+        for k, _ in enumerate(self.__slots_local):
+            self.__canvas.delete(self.__slots_local[k][0])
             
     def delete_right(self) -> None:
-        for k, _ in enumerate(self.slots_remote_right):
-            self.canvas.delete(self.slots_remote_right[k][0])
+        for k, _ in enumerate(self.__slots_remote_right):
+            self.__canvas.delete(self.__slots_remote_right[k][0])
 
     def delete_left(self) -> None:
-        for k, _ in enumerate(self.slots_remote_left):
-            self.canvas.delete(self.slots_remote_left[k][0])
+        for k, _ in enumerate(self.__slots_remote_left):
+            self.__canvas.delete(self.__slots_remote_left[k][0])
 
 
 
     def mostrarEndGame(self):
-        indice_jogador = self.jogo.getLocalPosition()
+        indice_jogador = self.__jogo.getLocalPosition()
         self.setCanvas()
-        if len(self.jogo.getJogadores()[indice_jogador].getMao()):
+        if len(self.__jogo.getJogadores()[indice_jogador].getMao()):
             imagem = 'perdeu'
         else:
             imagem = 'venceu'    
         
-        self.background_img = PhotoImage(file = f"menu_images/{imagem}.png")
-        background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
+        self.__background_img = PhotoImage(file = f"menu_images/{imagem}.png")
+        background = self.__canvas.create_image(0, 0,image=self.__background_img,anchor="nw")
         
     def mostrarTelaDesconexao(self):
-        self.jogo.setFimJogo(True)
-        self.jogo.setJogoAbandonado(True)
+        self.__jogo.setFimJogo(True)
+        self.__jogo.setJogoAbandonado(True)
         self.setCanvas()
-        self.background_img = PhotoImage(file = f"menu_images/desconexao.png")
-        background = self.canvas.create_image(0, 0,image=self.background_img,anchor="nw")
+        self.__background_img = PhotoImage(file = f"menu_images/desconexao.png")
+        background = self.__canvas.create_image(0, 0,image=self.__background_img,anchor="nw")
         sleep(3)
-        self.window.destroy()
+        self.__window.destroy()
     
     def escolherCor(self):
-        carta = self.jogo.getMesa().getUltimaCarta()
+        carta = self.__jogo.getMesa().getUltimaCarta()
         cor = carta.getFrente().getId()[0]
         
         if cor == "l":
@@ -342,35 +342,35 @@ class ActorInterface(DogPlayerInterface):
             quadrado4 = 'roxo'        
             
 
-        self.rectangle = PhotoImage(file = f"table_images/{retangulo}.png")
-        self.rectangle_id = self.canvas.create_image(640, 360, image=self.rectangle)
+        self.__rectangle = PhotoImage(file = f"table_images/{retangulo}.png")
+        self.__rectangle_id = self.__canvas.create_image(640, 360, image=self.__rectangle)
     
         
-        self.vermelho = PhotoImage(file = f"table_images/{quadrado1}.png")
-        self.button1_id = self.canvas.create_image(745, 255, image=self.vermelho)
-        self.canvas.tag_bind(self.button1_id, "<Button-1>", lambda x:  self.mudaCor(quadrado1))
+        self.__vermelho = PhotoImage(file = f"table_images/{quadrado1}.png")
+        self.__button1_id = self.__canvas.create_image(745, 255, image=self.__vermelho)
+        self.__canvas.tag_bind(self.__button1_id, "<Button-1>", lambda x:  self.mudaCor(quadrado1))
 
 
-        self.azul = PhotoImage(file = f"table_images/{quadrado2}.png")
-        self.button2_id = self.canvas.create_image(535, 255, image=self.azul)
-        self.canvas.tag_bind(self.button2_id, "<Button-1>", lambda x: self.mudaCor(quadrado2))
+        self.__azul = PhotoImage(file = f"table_images/{quadrado2}.png")
+        self.__button2_id = self.__canvas.create_image(535, 255, image=self.__azul)
+        self.__canvas.tag_bind(self.__button2_id, "<Button-1>", lambda x: self.mudaCor(quadrado2))
 
 
-        self.amarelo = PhotoImage(file = f"table_images/{quadrado3}.png")
-        self.button3_id = self.canvas.create_image(745, 465, image=self.amarelo)
-        self.canvas.tag_bind(self.button3_id, "<Button-1>", lambda x: self.mudaCor(quadrado3))
+        self.__amarelo = PhotoImage(file = f"table_images/{quadrado3}.png")
+        self.__button3_id = self.__canvas.create_image(745, 465, image=self.__amarelo)
+        self.__canvas.tag_bind(self.__button3_id, "<Button-1>", lambda x: self.mudaCor(quadrado3))
 
 
-        self.verde = PhotoImage(file = f"table_images/{quadrado4}.png")
-        self.button4_id = self.canvas.create_image(535, 465, image=self.verde)
-        self.canvas.tag_bind(self.button4_id, "<Button-1>", lambda x: self.mudaCor(quadrado4))
+        self.__verde = PhotoImage(file = f"table_images/{quadrado4}.png")
+        self.__button4_id = self.__canvas.create_image(535, 465, image=self.__verde)
+        self.__canvas.tag_bind(self.__button4_id, "<Button-1>", lambda x: self.mudaCor(quadrado4))
         
         # jogo.mudarCor
         
         # atualiza interface e faz envio da jogada, destruindo a tela criada
 
     def mudaCor(self, cor: str):
-        carta = self.jogo.getMesa().getUltimaCarta()
+        carta = self.__jogo.getMesa().getUltimaCarta()
         carta.getFrente().setCor(cor)
  
         cores_mais_dois = {
@@ -394,20 +394,20 @@ class ActorInterface(DogPlayerInterface):
         print(carta.getFrente().getSimbolo())
         if carta.getFrente().getSimbolo() == 'mais_dois':
             carta.getFrente().setId(cores_mais_dois[cor])
-            self.jogo.getMesa().setUltimaCarta(carta)
+            self.__jogo.getMesa().setUltimaCarta(carta)
         elif carta.getFrente().getSimbolo() == 'troca_cor':
             carta.getFrente().setId(cores_coringa[cor])
-            self.jogo.getMesa().setUltimaCarta(carta)
+            self.__jogo.getMesa().setUltimaCarta(carta)
         ################
         # ficar no Actor
         self.atualizarInterface()
 
-        if self.jogo.getJogadorAtual().getId() == self.jogo.getJogadores()[self.jogo.getLocalPosition()].getId():
+        if self.__jogo.getJogadorAtual().getId() == self.__jogo.getJogadores()[self.__jogo.getLocalPosition()].getId():
             sleep(0.2)
 
-            a = self.rectangle_id
+            a = self.__rectangle_id
             for i in range(a,a+5):
-                self.canvas.delete(i)
+                self.__canvas.delete(i)
 
             dict_a = {
                 'match_status': 'progress',
@@ -415,7 +415,7 @@ class ActorInterface(DogPlayerInterface):
                 'cor': cor
             }
 
-            self.dog_server_interface.send_move(dict_a)
+            self.__dog_server_interface.send_move(dict_a)
 
 
     def start_table(self) -> None:
@@ -424,11 +424,11 @@ class ActorInterface(DogPlayerInterface):
         self.atualizarInterface()
     
     def setMessage(self, message: str) -> None:
-        self.mensagem = message
-        self.canvas.itemconfig(self.mesage_var, text =self.mensagem)
+        self.__mensagem = message
+        self.__canvas.itemconfig(self.mesage_var, text =self.__mensagem)
     
     def update_mesage(self):
-        self.canvas.itemconfig(self.mesage_var, text =self.mensagem)
+        self.__canvas.itemconfig(self.mesage_var, text =self.__mensagem)
 
     def atualizarInterface(self):
         self.delete_local()
